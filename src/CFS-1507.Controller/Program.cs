@@ -5,7 +5,10 @@ using CFS_1507.Infrastructure.Persistence;
 // using CFS_1507.Infrastructure.Extension;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop.Infrastructure;
-
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 DotNetEnv.Env.Load();
 
@@ -15,6 +18,36 @@ builder.Services.AddOpenApi();
 
 // ------- DI --------
 builder.Services.AddInjection(builder.Configuration);
+builder.Services.AddAuthorization(options =>
+{
+
+});
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = Environment.GetEnvironmentVariable("Issuer"),
+        ValidAudience = Environment.GetEnvironmentVariable("Audience"),
+        IssuerSigningKey = new SymmetricSecurityKey
+                    (Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")!))
+    };
+});
+
+builder.Services.AddAuthorization();
+builder.Services.AddControllers();
 // -------------------
 
 // ------- logger ------
@@ -23,8 +56,17 @@ builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 // --------------------
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 // -------- test db connection --------
 using (var scope = app.Services.CreateScope())
 {
@@ -51,6 +93,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-// app.ApplyMigration();
+app.UseAuthentication();
+// ----- Middleware ----
+
+// ---------------------
+app.UseAuthorization();
 app.Run();
 

@@ -1,0 +1,33 @@
+services:
+  cfs.api-be:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - uploads_volume:/data/Uploads
+    ports:
+      - "5552:5555"
+    restart: always
+    environment:
+      - DEMO_MODE=false
+      - DEBUG_MODE=true
+      - DB_LOGGING=true
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5555
+      - CONNECTION_STRING=Host=ep-fancy-breeze-ada08n75-pooler.c-2.us-east-1.aws.neon.tech;Database=neondb;Username=neondb_owner;Password=npg_rpDy14IbSYsN
+      - ONPREMISE=false
+      - JWT_SECRET=cabbd31d58e4d08f0a37be679e93e274
+      - JWT_REFRESH_SECRET=7bcd758e76ca4cc2c134230b9bacd671
+      - JWT_ACCESS_EXPIRES_IN=1440
+      - JWT_REFRESH_EXPIRES_IN=21600
+      - Issuer=CFS-API
+      - Audience=CFS-API
+    networks:
+      - cfs-net
+      
+volumes:
+  uploads_volume:
+
+networks:
+  cfs-net:
+    driver: bridge

@@ -16,6 +16,7 @@ namespace CFS_1507.Domain.Entities
         public string userName { get; set; } = null!;
         public string? email { get; set; }
         public string hashPassWord { get; set; } = null!;
+        public virtual List<BlackListEntity> BlackListEntities { get; set; } = [];
 
         private UserEntity() { }
         private UserEntity(string userName, string? email, string hashPassWord)
@@ -29,6 +30,16 @@ namespace CFS_1507.Domain.Entities
         {
             var hashPassWord = BCrypt.Net.BCrypt.HashPassword(arg.password);
             return new UserEntity(arg.username, arg.email, hashPassWord);
+        }
+        public bool CheckPassword(string rawPassWord)
+        {
+            return BCrypt.Net.BCrypt.Verify(rawPassWord, this.hashPassWord);
+        }
+
+        public void ChangePassword(string newPassword)
+        {
+            var newHashPassWord = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            this.hashPassWord = newHashPassWord;
         }
     }
 }

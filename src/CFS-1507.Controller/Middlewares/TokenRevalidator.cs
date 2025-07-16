@@ -5,22 +5,17 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using CFS_1507.Application.Services.TokenService;
+using CFS_1507.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace CFS_1507.Controller.Middlewares
 {
     public class TokenRevalidator(
         TokenService _tokenService,
+        AppDbContext dbContext,
         ILogger<TokenRevalidator> _logger) : IMiddleware
     {
-        // public Task InvokeAsync(HttpContext context, RequestDelegate next)
-        // {
-        //     // //1: Get token
-        //     // //2: Extract => rawData
-        //     // //3: Verify token, if ok => next
-        //     throw new NotImplementedException();
-
-        // }
         public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
         {
             var endpoint = httpContext.GetEndpoint();
@@ -34,11 +29,25 @@ namespace CFS_1507.Controller.Middlewares
                     var rawToken = ExtractToken(httpContext);
 
                     // validate token 
+                    var usedToken = "";
                     if (!string.IsNullOrEmpty(rawToken))
                     {
                         var tokenValidator = _tokenService.ValidateToken(rawToken).Value;
                         var jit = tokenValidator.Claims.FirstOrDefault(e => e.Type == "jti")?.Value;
                         var userId = tokenValidator.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value;
+                        var token_id = tokenValidator.Claims.FirstOrDefault(e => e.Type == "token_id")?.Value ?? tokenValidator.Claims.FirstOrDefault(e => e.Type == "jti")?.Value;
+                        usedToken = token_id;
+                    }
+
+                    // check token in blacklist or not 
+                    if (string.IsNullOrEmpty(usedToken))
+                    {
+                        throw new UnauthorizedAccessException("Invalid token.");
+                    }
+                    var tokenUsed = await dbContext.BlackListEntities.Where(x => x.token_id == usedToken).FirstOrDefaultAsync();
+                    if (tokenUsed != null)
+                    {
+                        throw new UnauthorizedAccessException("Token is used!");
                     }
 
                     await next(httpContext);

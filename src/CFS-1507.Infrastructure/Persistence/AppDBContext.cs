@@ -17,6 +17,7 @@ namespace CFS_1507.Infrastructure.Persistence
         public DbSet<LanguageEntity> LanguageEntities { get; set; }
         public DbSet<ProductEntity> ProductEntities { get; set; }
         public DbSet<UserEntity> UserEntities { get; set; }
+        public DbSet<BlackListEntity> BlackListEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

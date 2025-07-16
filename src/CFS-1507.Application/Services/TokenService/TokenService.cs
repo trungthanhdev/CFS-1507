@@ -96,6 +96,7 @@ namespace CFS_1507.Application.Services.TokenService
                 throw new InvalidOperationException("Invalid refresh token expiration format");
             var claims = new[]
                 {
+                    new Claim("token_id", Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.NameIdentifier, user.user_id),
                     new Claim(ClaimTypes.Name, user.userName),
                     new Claim(ClaimTypes.Email, user.email ?? "")

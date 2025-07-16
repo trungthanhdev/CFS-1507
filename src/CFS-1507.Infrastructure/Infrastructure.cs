@@ -1,6 +1,7 @@
 ﻿using CFS_1507.Domain.Interfaces;
 using CFS_1507.Infrastructure.Persistence;
 using CFS_1507.Infrastructure.Persistence.Repositories;
+using CTCore.DynamicQuery.Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ public static class InfrastructureInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connectionString));
 
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped(typeof(IRepositoryDefinition<>), typeof(RepositoryDefinition<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
     }
 }

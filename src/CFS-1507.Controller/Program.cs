@@ -9,6 +9,8 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CFS_1507.Controller.Middlewares;
+using CFS_1507.Controller.Endpoint;
 
 DotNetEnv.Env.Load();
 
@@ -58,7 +60,7 @@ builder.Logging.AddDebug();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -95,8 +97,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 // ----- Middleware ----
-
+app.UseMiddleware<TokenRevalidator>();
 // ---------------------
 app.UseAuthorization();
+// ------ map endpoints -------
+new AuthEndpoint().MapEndpoints(app);
+// ----------------------------
 app.Run();
 

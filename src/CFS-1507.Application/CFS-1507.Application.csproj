@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CFS-1507.Domain\CFS-1507.Domain.csproj" />
     <ProjectReference Include="..\CFS-1507.Infrastructure\CFS-1507.Infrastructure.csproj" />
+    <ProjectReference Include="..\CFS-1507.Contract\CFS-1507.Contract.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

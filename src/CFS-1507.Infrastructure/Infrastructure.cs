@@ -1,4 +1,5 @@
 ﻿using CFS_1507.Domain.Interfaces;
+using CFS_1507.Infrastructure.Integrations;
 using CFS_1507.Infrastructure.Persistence;
 using CFS_1507.Infrastructure.Persistence.Repositories;
 using CTCore.DynamicQuery.Core.Domain.Interfaces;
@@ -23,5 +24,6 @@ public static class InfrastructureInjection
 
         services.AddScoped(typeof(IRepositoryDefinition<>), typeof(RepositoryDefinition<>));
         services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
+        services.AddScoped<ILocalStorage, LocalStorage>();
     }
 }

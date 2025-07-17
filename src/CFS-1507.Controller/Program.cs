@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CFS_1507.Controller.Middlewares;
 using CFS_1507.Controller.Endpoint;
+using Microsoft.Extensions.FileProviders;
 
 DotNetEnv.Env.Load();
 
@@ -62,7 +63,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
-
+app.Run("http://0.0.0.0:5555");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -88,6 +89,20 @@ using (var scope = app.Services.CreateScope())
 }
 // -----------------------------------
 
+// --------- upload file ----------
+// var imagePath = "/data/Uploads";
+
+// if (!Directory.Exists(imagePath))
+// {
+//     Directory.CreateDirectory(imagePath); // đảm bảo tồn tại khi chạy lần đầu
+// }
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider("/data/Uploads"),
+    RequestPath = "/images"
+});
+// --------------------------------
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -102,6 +117,7 @@ app.UseMiddleware<TokenRevalidator>();
 app.UseAuthorization();
 // ------ map endpoints -------
 new AuthEndpoint().MapEndpoints(app);
+new ProductEndpoint().MapEndpoints(app);
 // ----------------------------
 app.Run();
 

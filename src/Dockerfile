@@ -21,3 +21,4 @@ COPY CFS-1507.Controller/appsettings.json /app/appsettings.json
 COPY CFS-1507.Controller/appsettings.Development.json /app/appsettings.Development.json
 
 ENTRYPOINT ["dotnet", "CFS-1507.Controller.dll"]
+EXPOSE 5555

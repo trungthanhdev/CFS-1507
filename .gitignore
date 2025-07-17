@@ -8,7 +8,7 @@
 tkp.db
 docker-compose.local.yml
 docker-compose.yml
-
+fly.toml 
 .env
 
 src.sln

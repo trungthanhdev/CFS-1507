@@ -17,8 +17,9 @@ namespace CFS_1507.Domain.Entities
         public string? email { get; set; }
         public string hashPassWord { get; set; } = null!;
         public virtual List<BlackListEntity> BlackListEntities { get; set; } = [];
+        public virtual List<AttachToEntity> AttachToEntities { get; set; } = [];
 
-        private UserEntity() { }
+        public UserEntity() { }
         private UserEntity(string userName, string? email, string hashPassWord)
         {
             this.user_id = Guid.NewGuid().ToString();

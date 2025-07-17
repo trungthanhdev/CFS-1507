@@ -3,6 +3,7 @@ using System;
 using CFS_1507.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CFS_1507.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250717090501_InitDB09")]
+    partial class InitDB09
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,14 +186,14 @@ namespace CFS_1507.Infrastructure.Migrations
                         {
                             user_id = "62b7cf0b-53c4-4e6d-b7e3-9c4fddb8f7da",
                             email = "admin@example.com",
-                            hashPassWord = "$2a$11$KNZLsWhag2eHt2FvvO/Zp.BfDDarMVYA8xMRlJmCt9iHREew38wme",
+                            hashPassWord = "$2a$11$xkuJ7e8/Je3UxQvwnXvm2u2RymgvdVEu2TO2FqMc8sZpi4RmH4EY6",
                             userName = "root"
                         },
                         new
                         {
                             user_id = "8dbdf2f7-139b-4037-9f75-4f489313cb12",
                             email = "user1@example.com",
-                            hashPassWord = "$2a$11$KNZLsWhag2eHt2FvvO/Zp.BfDDarMVYA8xMRlJmCt9iHREew38wme",
+                            hashPassWord = "$2a$11$sPYGlkDaP5/0RI8dbJdMzON3Hb/nq8zkUvnWxQHyA/ov.WixVUwDe",
                             userName = "dev"
                         });
                 });

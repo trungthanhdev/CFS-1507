@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CFS_1507.Application.Usecases.ProductUC.Commands;
 using CFS_1507.Contract.DTOs.ProductDto.Request;
+using CFS_1507.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +18,7 @@ namespace CFS_1507.Controller.Endpoint
                 .MapGroup("api/v1/product")
                 .WithDisplayName("Product");
 
-            pr.MapPost("/create", CreateProduct).RequireAuthorization().DisableAntiforgery();
+            pr.MapPost("/create", CreateProduct).RequireAuthorization(ERole.ADMIN.ToString()).DisableAntiforgery();
             return endpoints;
         }
         public async Task<IResult> CreateProduct(

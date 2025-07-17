@@ -41,8 +41,8 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
 
             if (await unitOfWork.SaveChangeAsync(cancellationToken) > 0)
             {
-                var accessToken = tokenService.GenerateToken(newUser, true);
-                var refreshToken = tokenService.GenerateToken(newUser, false);
+                var accessToken = await tokenService.GenerateToken(newUser, true);
+                var refreshToken = await tokenService.GenerateToken(newUser, false);
                 return new ResponseAuthDto { access_token = accessToken, refresh_token = refreshToken, user_name = newUser.userName, user_id = newUser.user_id };
             }
             throw new InvalidOperationException("Register failed, cannot save to database.");

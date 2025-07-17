@@ -36,6 +36,7 @@ namespace CFS_1507.Controller.Middlewares
                         var jit = tokenValidator.Claims.FirstOrDefault(e => e.Type == "jti")?.Value;
                         var userId = tokenValidator.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value;
                         var token_id = tokenValidator.Claims.FirstOrDefault(e => e.Type == "token_id")?.Value ?? tokenValidator.Claims.FirstOrDefault(e => e.Type == "jti")?.Value;
+                        var role = tokenValidator.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
                         usedToken = token_id;
                     }
 

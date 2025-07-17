@@ -12,18 +12,25 @@ using System.Text;
 using CFS_1507.Controller.Middlewares;
 using CFS_1507.Controller.Endpoint;
 using Microsoft.Extensions.FileProviders;
+using CFS_1507.Domain.Common;
+using System.Security.Claims;
 
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-
+builder.WebHost.UseUrls("http://0.0.0.0:5555");
 // ------- DI --------
 builder.Services.AddInjection(builder.Configuration);
 builder.Services.AddAuthorization(options =>
 {
 
+    options.AddPolicy(ERole.ADMIN.ToString(), policy =>
+        policy.RequireRole(ERole.ADMIN.ToString()));
+
+    options.AddPolicy(ERole.USER.ToString(), policy =>
+        policy.RequireRole(ERole.USER.ToString()));
 });
 builder.Services.AddAuthentication(options =>
 {
@@ -45,11 +52,13 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = Environment.GetEnvironmentVariable("Issuer"),
         ValidAudience = Environment.GetEnvironmentVariable("Audience"),
         IssuerSigningKey = new SymmetricSecurityKey
-                    (Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")!))
+                    (Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_SECRET")!)),
+        RoleClaimType = ClaimTypes.Role
+
     };
 });
 
-builder.Services.AddAuthorization();
+// builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 // -------------------
 
@@ -63,7 +72,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
-app.Run("http://0.0.0.0:5555");
+
+// ------ map endpoints -------
+new AuthEndpoint().MapEndpoints(app);
+new ProductEndpoint().MapEndpoints(app);
+// ----------------------------
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -90,17 +103,20 @@ using (var scope = app.Services.CreateScope())
 // -----------------------------------
 
 // --------- upload file ----------
-// var imagePath = "/data/Uploads";
-
-// if (!Directory.Exists(imagePath))
-// {
-//     Directory.CreateDirectory(imagePath); // đảm bảo tồn tại khi chạy lần đầu
-// }
-app.UseStaticFiles(new StaticFileOptions
+var uploadPath = "/data/Uploads";
+if (Directory.Exists(uploadPath))
 {
-    FileProvider = new PhysicalFileProvider("/data/Uploads"),
-    RequestPath = "/images"
-});
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider("/data/Uploads"),
+        RequestPath = "/images"
+    });
+}
+else
+{
+    Console.WriteLine("Warning: Upload path does not exist, static files for uploads will not be served.");
+}
+
 // --------------------------------
 
 
@@ -115,9 +131,5 @@ app.UseAuthentication();
 app.UseMiddleware<TokenRevalidator>();
 // ---------------------
 app.UseAuthorization();
-// ------ map endpoints -------
-new AuthEndpoint().MapEndpoints(app);
-new ProductEndpoint().MapEndpoints(app);
-// ----------------------------
 app.Run();
 

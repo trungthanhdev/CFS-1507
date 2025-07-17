@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using CFS_1507.Contract.DTOs.AuthDto.Response;
 using CFS_1507.Domain.Entities;
+using CFS_1507.Infrastructure.Persistence;
 using DotNetEnv;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +18,8 @@ using Microsoft.IdentityModel.Tokens;
 namespace CFS_1507.Application.Services.TokenService
 {
     public class TokenService(
-        ILogger<TokenService> _logger
+        ILogger<TokenService> _logger,
+        AppDbContext dbContext
     )
     {
         // validate token
@@ -62,7 +65,7 @@ namespace CFS_1507.Application.Services.TokenService
         }
 
         // generate token (access, refresh)
-        public string GenerateToken(UserEntity user, bool is_Access)
+        public async Task<string> GenerateToken(UserEntity user, bool is_Access)
         {
             //1: tao instance cua JwtSecurityTokenHandler
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -94,13 +97,24 @@ namespace CFS_1507.Application.Services.TokenService
 
             if (!double.TryParse(refreshExpired, out var refreshTokenExpiresIn))
                 throw new InvalidOperationException("Invalid refresh token expiration format");
-            var claims = new[]
+
+            var userRole = await dbContext.AttachToEntities
+                .Include(x => x.Role)
+                .Where(x => x.user_id == user.user_id && x.Role != null)
+                .Select(x => x.Role!.role_name)
+                .ToListAsync();
+
+            var claims = new List<Claim>
                 {
                     new Claim("token_id", Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.NameIdentifier, user.user_id),
                     new Claim(ClaimTypes.Name, user.userName),
                     new Claim(ClaimTypes.Email, user.email ?? "")
                 };
+            foreach (var role in userRole)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             //4: generate
             if (is_Access)

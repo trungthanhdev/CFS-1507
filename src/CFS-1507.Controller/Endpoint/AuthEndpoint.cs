@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CFS_1507.Application.Usecases.AuthUC.Commands;
 using CFS_1507.Contract.DTOs.AuthDto.Request;
+using CFS_1507.Domain.Common;
 using CTCore.DynamicQuery.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

@@ -35,8 +35,8 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
             if (is_Verified == false)
                 throw new UnauthorizedAccessException("Password invalid!");
 
-            var access_token = tokenService.GenerateToken(currentUser, true);
-            var refresh_token = tokenService.GenerateToken(currentUser, false);
+            var access_token = await tokenService.GenerateToken(currentUser, true);
+            var refresh_token = await tokenService.GenerateToken(currentUser, false);
             return new ResponseAuthDto { access_token = access_token, refresh_token = refresh_token, user_name = currentUser.userName, user_id = currentUser.user_id };
         }
     }

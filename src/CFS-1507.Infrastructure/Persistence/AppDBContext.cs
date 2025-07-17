@@ -18,11 +18,16 @@ namespace CFS_1507.Infrastructure.Persistence
         public DbSet<ProductEntity> ProductEntities { get; set; }
         public DbSet<UserEntity> UserEntities { get; set; }
         public DbSet<BlackListEntity> BlackListEntities { get; set; }
+        public DbSet<RoleEntity> RoleEntities { get; set; }
+        public DbSet<AttachToEntity> AttachToEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new LanguageEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleEntityConfiguration());
+            modelBuilder.ApplyConfiguration(new AttachTOEntityConfiguration());
         }
     }
 }

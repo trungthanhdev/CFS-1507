@@ -25,5 +25,13 @@ namespace CFS_1507.Domain.Entities
             this.role_id = role_id;
             this.user_id = user_id;
         }
+        public static AttachToEntity Create(string role_id, string user_id)
+        {
+            return new AttachToEntity(role_id, user_id);
+        }
+        public void UpdateRole(string role_id)
+        {
+            this.role_id = role_id ?? this.role_id;
+        }
     }
 }

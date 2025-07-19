@@ -42,5 +42,19 @@ namespace CFS_1507.Domain.Entities
             var newHashPassWord = BCrypt.Net.BCrypt.HashPassword(newPassword);
             this.hashPassWord = newHashPassWord;
         }
+
+        public void AddRole(string role_id)
+        {
+            if (!AttachToEntities.Any(r => r.role_id == role_id))
+            {
+                var roleAttachTo = AttachToEntity.Create(role_id, this.user_id);
+                AttachToEntities.Add(roleAttachTo);
+            }
+        }
+
+        public void UpdateRole(AttachToEntity currentRole, RoleEntity newRole)
+        {
+            currentRole.UpdateRole(newRole.role_id);
+        }
     }
 }

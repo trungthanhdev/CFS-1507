@@ -39,6 +39,10 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
             var newUser = UserEntity.Create(request.Arg);
             userRepo.Add(new List<UserEntity> { newUser });
 
+            var role_id = await dbContext.RoleEntities.Where(x => x.role_name == request.Arg.role).Select(x => x.role_id).FirstOrDefaultAsync(cancellationToken);
+            if (role_id is null) throw new BadHttpRequestException("Role not found!");
+
+            newUser.AddRole(role_id);
             if (await unitOfWork.SaveChangeAsync(cancellationToken) > 0)
             {
                 var accessToken = await tokenService.GenerateToken(newUser, true);

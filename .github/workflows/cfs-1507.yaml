@@ -1,0 +1,25 @@
+name: cfs-1507
+
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  cfs-1507-be-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Build backend
+        run: dotnet build ./src/CFS-1507.Controller/CFS-1507.Controller.csproj --configuration Release
+
+      - name: Building System
+        working-directory: ./src
+        run: docker compose up -d --build --force-recreate

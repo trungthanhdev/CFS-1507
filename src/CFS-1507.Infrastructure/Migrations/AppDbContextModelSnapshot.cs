@@ -27,9 +27,15 @@ namespace CFS_1507.Infrastructure.Migrations
                     b.Property<string>("attach_to_id")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset?>("created_at")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("role_id")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("updated_at")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("user_id")
                         .IsRequired()
@@ -47,13 +53,17 @@ namespace CFS_1507.Infrastructure.Migrations
                         new
                         {
                             attach_to_id = "6e4f964b-8c79-4c7f-8db7-5c9df6b3a131",
+                            created_at = new DateTimeOffset(new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             role_id = "a47a25b5-6ef4-47b4-b942-52c2525a9a56",
+                            updated_at = new DateTimeOffset(new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             user_id = "62b7cf0b-53c4-4e6d-b7e3-9c4fddb8f7da"
                         },
                         new
                         {
                             attach_to_id = "09fc9342-3bc3-4a01-81d9-2c38e6b6f5c4",
+                            created_at = new DateTimeOffset(new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             role_id = "f8e7280b-37c3-41d1-9a2d-6a1f40b25cd3",
+                            updated_at = new DateTimeOffset(new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             user_id = "8dbdf2f7-139b-4037-9f75-4f489313cb12"
                         });
                 });
@@ -118,6 +128,9 @@ namespace CFS_1507.Infrastructure.Migrations
                     b.Property<string>("product_id")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset?>("created_at")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("product_image")
                         .HasColumnType("text");
 
@@ -126,6 +139,9 @@ namespace CFS_1507.Infrastructure.Migrations
 
                     b.Property<double?>("product_price")
                         .HasColumnType("double precision");
+
+                    b.Property<DateTimeOffset?>("updated_at")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("product_id");
 
@@ -163,12 +179,18 @@ namespace CFS_1507.Infrastructure.Migrations
                     b.Property<string>("user_id")
                         .HasColumnType("text");
 
+                    b.Property<DateTimeOffset?>("created_at")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("email")
                         .HasColumnType("text");
 
                     b.Property<string>("hashPassWord")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("updated_at")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("userName")
                         .IsRequired()
@@ -182,15 +204,19 @@ namespace CFS_1507.Infrastructure.Migrations
                         new
                         {
                             user_id = "62b7cf0b-53c4-4e6d-b7e3-9c4fddb8f7da",
+                            created_at = new DateTimeOffset(new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             email = "admin@example.com",
                             hashPassWord = "$2a$11$KNZLsWhag2eHt2FvvO/Zp.BfDDarMVYA8xMRlJmCt9iHREew38wme",
+                            updated_at = new DateTimeOffset(new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             userName = "root"
                         },
                         new
                         {
                             user_id = "8dbdf2f7-139b-4037-9f75-4f489313cb12",
+                            created_at = new DateTimeOffset(new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             email = "user1@example.com",
                             hashPassWord = "$2a$11$KNZLsWhag2eHt2FvvO/Zp.BfDDarMVYA8xMRlJmCt9iHREew38wme",
+                            updated_at = new DateTimeOffset(new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             userName = "dev"
                         });
                 });

@@ -36,7 +36,6 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
                 image = uploadImage;
             }
 
-            //2: create new product
             var newProduct = ProductEntity.Create(dto.product_name, dto.product_price, image);
             productRepo.Add(new List<ProductEntity> { newProduct });
 

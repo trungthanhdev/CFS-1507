@@ -42,7 +42,7 @@ jobs:
                 context: .
                 dockerfile: Dockerfile
               ports:
-                - "5555:5555"
+                - "5552:5555"
               environment:
                 - DEMO_MODE=false
                 - DEBUG_MODE=true

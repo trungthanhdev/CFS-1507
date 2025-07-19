@@ -24,6 +24,8 @@ namespace CFS_1507.Controller.Endpoint
             pr.MapPost("/create", CreateProduct).RequireAuthorization(ERole.ADMIN.ToString()).DisableAntiforgery();
             pr.MapGet("/get-all", GetAllProduct).RequireAuthorization();
             pr.MapGet("/{product_id}", GetProductDetail).RequireAuthorization();
+            pr.MapPatch("/{product_id}", SoftDeleteProduct).RequireAuthorization(ERole.ADMIN.ToString());
+            pr.MapPatch("/update/{product_id}", UpdateProduct).RequireAuthorization(ERole.ADMIN.ToString());
             return endpoints;
         }
         public async Task<IResult> CreateProduct(
@@ -86,6 +88,43 @@ namespace CFS_1507.Controller.Endpoint
                 return Results.Problem(ex.Message, statusCode: 404);
             }
             catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
+        }
+        public async Task<IResult> SoftDeleteProduct(
+            [FromRoute] string product_id,
+            [FromServices] IMediator mediator)
+        {
+            try
+            {
+                var result = await mediator.Send(new SoftDeleteProductCommand(product_id));
+                return Results.Ok(new { success = 200, data = result });
+            }
+            catch (NotFoundException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 400);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
+        }
+        public async Task<IResult> UpdateProduct(
+            [FromRoute] string product_id,
+            [FromBody] ReqUpdateProductDto dto,
+            [FromServices] IMediator mediator)
+        {
+            try
+            {
+                var result = await mediator.Send(new UpdateProductCommand(product_id, dto));
+                return Results.Ok(new { success = 200, data = result });
+            }
+            catch (NotFoundException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 400);
+            }
+            catch (InvalidOperationException ex)
             {
                 return Results.Problem(ex.Message, statusCode: 500);
             }

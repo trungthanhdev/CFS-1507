@@ -26,6 +26,7 @@ namespace CFS_1507.Application.Usecases.ProductUC.Queries
             if (helper.pageNumber <= 0 || helper.pageSize <= 0)
                 throw new BadHttpRequestException("Page size and Page number are required!");
             var allProduct = dbContext.ProductEntities
+                .Where(x => x.is_deleted == false)
                 .Select(x => new ResProductDto
                 {
                     product_id = x.product_id,

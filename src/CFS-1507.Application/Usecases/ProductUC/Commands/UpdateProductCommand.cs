@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CFS_1507.Contract.DTOs.ProductDto.Request;
 using CFS_1507.Infrastructure.Persistence;
@@ -27,7 +28,7 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
     {
         public async Task<OkResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
-            var user_id = contextAccessor.HttpContext?.User.FindFirst("user_id")?.Value;
+            var user_id = contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrWhiteSpace(user_id))
                 throw new NotFoundException("User_id from token not found!");
 

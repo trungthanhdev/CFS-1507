@@ -13,6 +13,7 @@ namespace CFS_1507.Domain.Entities
         public string product_id { get; set; } = null!;
         public string? product_name { get; set; }
         public double? product_price { get; set; }
+        public bool is_deleted { get; private set; } = false;
         public string? product_image { get; set; }
         public DateTimeOffset? created_at { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset? updated_at { get; set; } = DateTimeOffset.UtcNow;
@@ -33,6 +34,12 @@ namespace CFS_1507.Domain.Entities
             this.product_name = product_name ?? this.product_name;
             this.product_image = product_image ?? this.product_image;
             this.product_price = product_price ?? this.product_price;
+            this.updated_at = DateTimeOffset.UtcNow;
+        }
+
+        public void ToggleDeleteProduct()
+        {
+            this.is_deleted = !is_deleted;
             this.updated_at = DateTimeOffset.UtcNow;
         }
     }

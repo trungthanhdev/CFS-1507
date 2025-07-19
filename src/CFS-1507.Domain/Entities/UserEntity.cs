@@ -57,7 +57,6 @@ namespace CFS_1507.Domain.Entities
                 AttachToEntities.Add(roleAttachTo);
             }
         }
-
         public void UpdateRole(AttachToEntity currentRole, RoleEntity newRole)
         {
             currentRole.UpdateRole(newRole.role_id);
@@ -66,6 +65,10 @@ namespace CFS_1507.Domain.Entities
         public void UpdateProduct(ReqUpdateProductDto dto, ProductEntity product)
         {
             product.Update(dto.product_name, dto.product_image, dto.product_price);
+        }
+        public void ToggleDeleteProduct(ProductEntity product)
+        {
+            product.ToggleDeleteProduct();
         }
     }
 }

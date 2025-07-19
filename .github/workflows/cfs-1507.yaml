@@ -20,6 +20,45 @@ jobs:
       - name: Build backend
         run: dotnet build ./src/CFS-1507.Controller/CFS-1507.Controller.csproj --configuration Release
 
+      - name: Install envsubst
+        run: sudo apt-get update && sudo apt-get install -y gettext
+
+      - name: Create docker-compose.yml and .env
+        working-directory: ./src
+        env:
+          CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+          JWT_ACCESS_EXPIRES_IN: ${{ secrets.JWT_ACCESS_EXPIRES_IN }}
+          JWT_REFRESH_EXPIRES_IN: ${{ secrets.JWT_REFRESH_EXPIRES_IN }}
+          JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+          JWT_AUDIENCE: ${{ secrets.JWT_AUDIENCE }}
+        run: |
+          cat <<"EOF" | envsubst > docker-compose.yml
+          version: "3.8"
+          services:
+            api:
+              build:
+                context: .
+                dockerfile: Dockerfile
+              ports:
+                - "5555:5555"
+              environment:
+                - DEMO_MODE=false
+                - DEBUG_MODE=true
+                - DB_LOGGING=true
+                - ASPNETCORE_ENVIRONMENT=Development
+                - ASPNETCORE_URLS=http://+:5555
+                - CONNECTION_STRING=$CONNECTION_STRING
+                - ONPREMISE=false
+                - JWT_SECRET=$JWT_SECRET
+                - JWT_REFRESH_SECRET=$JWT_REFRESH_SECRET
+                - JWT_ACCESS_EXPIRES_IN=$JWT_ACCESS_EXPIRES_IN
+                - JWT_REFRESH_EXPIRES_IN=$JWT_REFRESH_EXPIRES_IN
+                - Issuer=$JWT_ISSUER
+                - Audience=$JWT_AUDIENCE
+          EOF
+
       - name: Building System
         working-directory: ./src
         run: docker compose up -d --build --force-recreate

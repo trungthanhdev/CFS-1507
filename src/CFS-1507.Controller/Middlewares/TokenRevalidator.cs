@@ -55,7 +55,7 @@ namespace CFS_1507.Controller.Middlewares
 
                     await next(httpContext);
                 }
-                catch (Exception ex)
+                catch (UnauthorizedAccessException ex)
                 {
                     _logger.LogError(ex, "An exception occurred: {Message}", ex.Message);
 

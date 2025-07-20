@@ -9,7 +9,10 @@ namespace CFS_1507.Contract.DTOs.ProductDto.Request
     public class ReqCreateProductDto
     {
         public string? product_name { get; set; }
-        public double product_price { get; set; }
+        public string? translate_name { get; set; }
+        public string? product_description { get; set; }
+        public string? translate_description { get; set; }
+        public double? product_price { get; set; }
         public IFormFile? product_image { get; set; }
     }
 }

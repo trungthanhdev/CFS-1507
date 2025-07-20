@@ -3,6 +3,7 @@ using System;
 using CFS_1507.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CFS_1507.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250720045223_InitDB02")]
+    partial class InitDB02
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,9 +137,6 @@ namespace CFS_1507.Infrastructure.Migrations
                     b.Property<bool>("is_deleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("product_description")
-                        .HasColumnType("text");
-
                     b.Property<string>("product_image")
                         .HasColumnType("text");
 
@@ -178,43 +178,6 @@ namespace CFS_1507.Infrastructure.Migrations
                             role_id = "f8e7280b-37c3-41d1-9a2d-6a1f40b25cd3",
                             role_name = "USER"
                         });
-                });
-
-            modelBuilder.Entity("CFS_1507.Domain.Entities.TranslateEntity", b =>
-                {
-                    b.Property<string>("translate_id")
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset?>("created_at")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("is_deleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("product_id")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("translate_description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("translate_image")
-                        .HasColumnType("text");
-
-                    b.Property<string>("translate_name")
-                        .HasColumnType("text");
-
-                    b.Property<double?>("translate_price")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTimeOffset?>("updated_at")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("translate_id");
-
-                    b.HasIndex("product_id");
-
-                    b.ToTable("TranslateEntities");
                 });
 
             modelBuilder.Entity("CFS_1507.Domain.Entities.UserEntity", b =>
@@ -292,22 +255,6 @@ namespace CFS_1507.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CFS_1507.Domain.Entities.TranslateEntity", b =>
-                {
-                    b.HasOne("CFS_1507.Domain.Entities.ProductEntity", "Product")
-                        .WithMany("TranslateEntities")
-                        .HasForeignKey("product_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("CFS_1507.Domain.Entities.ProductEntity", b =>
-                {
-                    b.Navigation("TranslateEntities");
                 });
 
             modelBuilder.Entity("CFS_1507.Domain.Entities.RoleEntity", b =>

@@ -3,6 +3,7 @@ using System;
 using CFS_1507.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CFS_1507.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250720050354_InitDB04")]
+    partial class InitDB04
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,9 +137,6 @@ namespace CFS_1507.Infrastructure.Migrations
                     b.Property<bool>("is_deleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("product_description")
-                        .HasColumnType("text");
-
                     b.Property<string>("product_image")
                         .HasColumnType("text");
 
@@ -193,9 +193,6 @@ namespace CFS_1507.Infrastructure.Migrations
 
                     b.Property<string>("product_id")
                         .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("translate_description")
                         .HasColumnType("text");
 
                     b.Property<string>("translate_image")

@@ -61,10 +61,13 @@ namespace CFS_1507.Domain.Entities
         {
             currentRole.UpdateRole(newRole.role_id);
         }
-
         public void UpdateProduct(ReqUpdateProductDto dto, ProductEntity product)
         {
-            product.Update(dto.product_name, dto.product_image, dto.product_price);
+            product.Update(dto.product_name, dto.product_image, dto.product_description, dto.product_price);
+        }
+        public void UpdateProductTranslate(ReqUpdateProductDto dto, TranslateEntity product)
+        {
+            product.Update(dto.translate_name, dto.product_price, dto.translate_description, dto.product_image);
         }
         public void ToggleDeleteProduct(ProductEntity product)
         {

@@ -25,7 +25,7 @@ namespace CFS_1507.Controller.Endpoint
             pr.MapGet("/get-all", GetAllProduct).RequireAuthorization();
             pr.MapGet("/{product_id}", GetProductDetail).RequireAuthorization();
             pr.MapPatch("/{product_id}", SoftDeleteProduct).RequireAuthorization(ERole.ADMIN.ToString());
-            pr.MapPatch("/update/{product_id}", UpdateProduct).RequireAuthorization(ERole.ADMIN.ToString());
+            pr.MapPatch("/update/{product_id}", UpdateProduct).RequireAuthorization(ERole.ADMIN.ToString()).DisableAntiforgery();
             return endpoints;
         }
         public async Task<IResult> CreateProduct(
@@ -51,6 +51,7 @@ namespace CFS_1507.Controller.Endpoint
             [FromQuery] int? pageNumber,
             [FromQuery] int? pageSize,
             [FromQuery] bool? sortByPrice,
+            [FromQuery] string? lan,
             [FromServices] IMediator mediator)
         {
             try
@@ -61,7 +62,7 @@ namespace CFS_1507.Controller.Endpoint
                     pageSize = pageSize ?? 0,
                     sortByPrice = sortByPrice ?? false
                 };
-                var result = await mediator.Send(new GetAllProductQuery(queryHelper));
+                var result = await mediator.Send(new GetAllProductQuery(queryHelper, lan));
                 return Results.Ok(new { success = 200, result });
             }
             catch (BadHttpRequestException ex)
@@ -112,7 +113,7 @@ namespace CFS_1507.Controller.Endpoint
         }
         public async Task<IResult> UpdateProduct(
             [FromRoute] string product_id,
-            [FromBody] ReqUpdateProductDto dto,
+            [FromForm] ReqUpdateProductDto dto,
             [FromServices] IMediator mediator)
         {
             try

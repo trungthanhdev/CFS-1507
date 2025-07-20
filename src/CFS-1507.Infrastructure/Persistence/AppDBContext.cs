@@ -20,6 +20,7 @@ namespace CFS_1507.Infrastructure.Persistence
         public DbSet<BlackListEntity> BlackListEntities { get; set; }
         public DbSet<RoleEntity> RoleEntities { get; set; }
         public DbSet<AttachToEntity> AttachToEntities { get; set; }
+        public DbSet<TranslateEntity> TranslateEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

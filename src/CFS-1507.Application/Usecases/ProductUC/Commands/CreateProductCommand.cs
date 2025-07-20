@@ -20,6 +20,7 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
     public class CreateProductCommandHandler(
         IUnitOfWork unitOfWork,
         IRepositoryDefinition<ProductEntity> productRepo,
+        IRepositoryDefinition<TranslateEntity> translateRepo,
         ILocalStorage localStorage
     ) : IRequestHandler<CreateProductCommand, OkResponse>
     {
@@ -29,15 +30,37 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
             var dto = request.Arg;
             if (string.IsNullOrWhiteSpace(dto.product_name))
                 throw new BadHttpRequestException("Product name is required!");
-            //1: validate imageFile
+            if (dto.product_price <= 0)
+                throw new BadHttpRequestException("Product price must be greater than 0!");
+
             if (dto.product_image != null || dto.product_image?.Length > 0)
             {
                 string uploadImage = await localStorage.SaveImageAsync(dto.product_image, "image");
                 image = uploadImage;
             }
-
-            var newProduct = ProductEntity.Create(dto.product_name, dto.product_price, image);
+            if (string.IsNullOrWhiteSpace(dto.translate_name))
+            {
+                dto.translate_name = dto.product_name + " default";
+            }
+            if (string.IsNullOrWhiteSpace(dto.translate_description) && dto.product_description != null)
+            {
+                dto.translate_description = dto.product_description + "default";
+            }
+            var newProduct = ProductEntity.Create(
+                dto.product_name,
+                dto.product_price,
+                dto.product_description,
+                image
+            );
+            var newProductTranslate = TranslateEntity.Create(
+                newProduct.product_id,
+                dto.translate_name,
+                dto.product_price,
+                dto.translate_description,
+                image
+            );
             productRepo.Add(new List<ProductEntity> { newProduct });
+            translateRepo.Add(new List<TranslateEntity> { newProductTranslate });
 
             if (await unitOfWork.SaveChangeAsync(cancellationToken) > 0)
             {

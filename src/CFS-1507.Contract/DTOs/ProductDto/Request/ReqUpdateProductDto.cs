@@ -13,5 +13,6 @@ namespace CFS_1507.Contract.DTOs.ProductDto.Request
         public string? product_description { get; set; }
         public string? translate_description { get; set; }
         public string? translate_name { get; set; }
+        public int? is_in_stock { get; set; }
     }
 }

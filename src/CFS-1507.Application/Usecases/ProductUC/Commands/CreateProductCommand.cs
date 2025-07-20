@@ -32,6 +32,8 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
                 throw new BadHttpRequestException("Product name is required!");
             if (dto.product_price <= 0)
                 throw new BadHttpRequestException("Product price must be greater than 0!");
+            if (dto.is_in_stock <= 0)
+                throw new BadHttpRequestException("Quantity in stock must be greater than 0!");
 
             if (dto.product_image != null || dto.product_image?.Length > 0)
             {
@@ -50,7 +52,8 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
                 dto.product_name,
                 dto.product_price,
                 dto.product_description,
-                image
+                image,
+                dto.is_in_stock
             );
             var newProductTranslate = TranslateEntity.Create(
                 newProduct.product_id,

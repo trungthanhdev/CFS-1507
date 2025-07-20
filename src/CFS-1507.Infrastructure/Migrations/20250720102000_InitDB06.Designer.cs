@@ -3,6 +3,7 @@ using System;
 using CFS_1507.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CFS_1507.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250720102000_InitDB06")]
+    partial class InitDB06
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,17 +233,8 @@ namespace CFS_1507.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("created_at")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("is_bought")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("is_deleted")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("is_in_cart")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("is_in_stock")
-                        .HasColumnType("integer");
 
                     b.Property<string>("product_description")
                         .HasColumnType("text");

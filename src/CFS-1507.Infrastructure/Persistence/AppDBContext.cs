@@ -21,6 +21,10 @@ namespace CFS_1507.Infrastructure.Persistence
         public DbSet<RoleEntity> RoleEntities { get; set; }
         public DbSet<AttachToEntity> AttachToEntities { get; set; }
         public DbSet<TranslateEntity> TranslateEntities { get; set; }
+        public DbSet<CartEntity> CartEntities { get; set; }
+        public DbSet<CartItemsEntity> CartItemsEntities { get; set; }
+        public DbSet<OrderEntity> OrderEntities { get; set; }
+        public DbSet<OrderItemsEntity> OrderItemsEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

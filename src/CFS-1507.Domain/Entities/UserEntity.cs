@@ -21,6 +21,7 @@ namespace CFS_1507.Domain.Entities
         public DateTimeOffset? updated_at { get; set; }
         public virtual List<BlackListEntity> BlackListEntities { get; set; } = [];
         public virtual List<AttachToEntity> AttachToEntities { get; set; } = [];
+        public virtual List<CartEntity> CartEntities { get; set; } = [];
 
         public UserEntity() { }
         private UserEntity(string userName, string? email, string hashPassWord)
@@ -63,7 +64,7 @@ namespace CFS_1507.Domain.Entities
         }
         public void UpdateProduct(ReqUpdateProductDto dto, ProductEntity product)
         {
-            product.Update(dto.product_name, dto.product_image, dto.product_description, dto.product_price);
+            product.Update(dto.product_name, dto.product_image, dto.product_description, dto.product_price, dto.is_in_stock);
         }
         public void UpdateProductTranslate(ReqUpdateProductDto dto, TranslateEntity product)
         {

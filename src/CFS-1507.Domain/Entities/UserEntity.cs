@@ -4,8 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using CFS_1507.Contract.DTOs.AuthDto.Request;
+using CFS_1507.Contract.DTOs.CartDto.Request;
 using CFS_1507.Contract.DTOs.ProductDto.Request;
 using CFS_1507.Domain.Common;
+using CFS_1507.Domain.DTOs;
 using CFS_1507.Domain.Interfaces;
 
 namespace CFS_1507.Domain.Entities
@@ -73,6 +75,13 @@ namespace CFS_1507.Domain.Entities
         public void ToggleDeleteProduct(ProductEntity product)
         {
             product.ToggleDeleteProduct();
+        }
+
+        public CartEntity AddToCart(List<ListCartItems> listCartItems)
+        {
+            var newCart = CartEntity.CreateCart(this.user_id, listCartItems);
+            CartEntities.Add(newCart);
+            return newCart;
         }
     }
 }

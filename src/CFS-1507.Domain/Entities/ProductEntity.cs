@@ -51,5 +51,17 @@ namespace CFS_1507.Domain.Entities
             this.is_deleted = !is_deleted;
             this.updated_at = DateTimeOffset.UtcNow;
         }
+        public void CheckQuantity(int quantity)
+        {
+            if (this.is_in_stock < quantity)
+            {
+                throw new InvalidOperationException("Quantity is greater than in stock!");
+            }
+        }
+        public void UpdateIsInCart(int quantity)
+        {
+            CheckQuantity(quantity);
+            is_in_cart += quantity;
+        }
     }
 }

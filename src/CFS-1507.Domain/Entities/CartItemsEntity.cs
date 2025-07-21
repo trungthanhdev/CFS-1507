@@ -43,9 +43,10 @@ namespace CFS_1507.Domain.Entities
                 throw new InvalidOperationException("Quantiy must be greater than 0");
             }
         }
-        public static CartItemsEntity CreateCartItem(string cart_id, int quantiy, string product_id)
+        public static CartItemsEntity CreateCartItem(string cart_id, int itemQuantiy, string product_id, ProductEntity product)
         {
-            return new CartItemsEntity(cart_id, quantiy, product_id);
+            product.UpdateIsInCart(itemQuantiy);
+            return new CartItemsEntity(cart_id, itemQuantiy, product_id);
         }
     }
 }

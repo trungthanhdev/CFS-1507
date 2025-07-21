@@ -50,7 +50,7 @@ namespace CFS_1507.Controller.Middlewares
                     var tokenUsed = await dbContext.BlackListEntities.Where(x => x.token_id == usedToken).FirstOrDefaultAsync();
                     if (tokenUsed != null)
                     {
-                        throw new UnauthorizedAccessException("Token is used!");
+                        throw new UnauthorizedAccessException("Login again!");
                     }
 
                     await next(httpContext);
@@ -65,7 +65,7 @@ namespace CFS_1507.Controller.Middlewares
                     await using var writer = new Utf8JsonWriter(httpContext.Response.BodyWriter);
                     writer.WriteStartObject();
                     writer.WriteNumber("stCode", 401);
-                    writer.WriteString("msg", "Auth failed");
+                    writer.WriteString("msg", ex.Message);
                     writer.WriteEndObject();
                     await writer.FlushAsync();
                 }

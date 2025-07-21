@@ -76,6 +76,7 @@ var app = builder.Build();
 // ------ map endpoints -------
 new AuthEndpoint().MapEndpoints(app);
 new ProductEndpoint().MapEndpoints(app);
+new CartEndpoint().MapEndpoints(app);
 // ----------------------------
 if (app.Environment.IsDevelopment())
 {

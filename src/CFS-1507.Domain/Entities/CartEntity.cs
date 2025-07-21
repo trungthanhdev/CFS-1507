@@ -4,7 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using CFS_1507.Contract.DTOs.CartDto.Request;
 using CFS_1507.Domain.Common;
+using CFS_1507.Domain.DTOs;
 
 namespace CFS_1507.Domain.Entities
 {
@@ -29,9 +31,20 @@ namespace CFS_1507.Domain.Entities
             this.created_at = DateTimeOffset.UtcNow;
             this.updated_at = DateTimeOffset.UtcNow;
         }
-        public static CartEntity CreateCart(string user_id)
+        public static CartEntity CreateCart(string user_id, List<ListCartItems> listCartItems)
         {
-            return new CartEntity(user_id);
+            var newCart = new CartEntity(user_id);
+            foreach (var item in listCartItems)
+            {
+                if (string.IsNullOrWhiteSpace(item.product_id))
+                    throw new InvalidOperationException("Product_id not found!");
+                if (item.Product is null)
+                    throw new InvalidOperationException("Product not found!");
+
+                var newCartItem = CartItemsEntity.CreateCartItem(newCart.cart_id, item.quantity, item.product_id, item.Product);
+                newCart.CartItemsEntities.Add(newCartItem);
+            }
+            return newCart;
         }
         public void CartPaid()
         {

@@ -61,7 +61,13 @@ namespace CFS_1507.Domain.Entities
         public void UpdateIsInCart(int quantity)
         {
             CheckQuantity(quantity);
-            is_in_cart += quantity;
+            is_in_cart += 1;
+        }
+        public void UndoIsInCart()
+        {
+            is_in_cart -= 1;
+            if (is_in_cart < 0)
+                is_in_cart = 0;
         }
     }
 }

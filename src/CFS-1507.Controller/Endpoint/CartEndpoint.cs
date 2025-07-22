@@ -19,6 +19,8 @@ namespace CFS_1507.Controller.Endpoint
                 .WithDisplayName("Cart");
 
             pr.MapPost("/add-to-cart", AddToCart).RequireAuthorization();
+            pr.MapDelete("/{product_id}", DeleteCartItem).RequireAuthorization();
+            pr.MapPatch("/remove-quantity", RemoveCartItemQuantity).RequireAuthorization();
             return endpoints;
         }
         public async Task<IResult> AddToCart(
@@ -28,6 +30,51 @@ namespace CFS_1507.Controller.Endpoint
             try
             {
                 var result = await mediator.Send(new AddToCartCommand(dto));
+                return Results.Ok(new { success = 200, data = result });
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 400);
+            }
+            catch (NotFoundException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 404);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
+        }
+
+        public async Task<IResult> DeleteCartItem(
+            [FromRoute] string product_id,
+            [FromServices] IMediator mediator)
+        {
+            try
+            {
+                var result = await mediator.Send(new DeleteCartItemsCommand(product_id));
+                return Results.Ok(new { success = 200, data = result });
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 400);
+            }
+            catch (NotFoundException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 404);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
+        }
+        public async Task<IResult> RemoveCartItemQuantity(
+            [FromBody] ReqRemoveQuantityDto dto,
+            [FromServices] IMediator mediator)
+        {
+            try
+            {
+                var result = await mediator.Send(new RemoveCartItemsQuantityCommand(dto));
                 return Results.Ok(new { success = 200, data = result });
             }
             catch (BadHttpRequestException ex)

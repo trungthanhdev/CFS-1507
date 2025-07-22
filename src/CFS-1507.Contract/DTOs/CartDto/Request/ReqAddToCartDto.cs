@@ -14,5 +14,8 @@ namespace CFS_1507.Contract.DTOs.CartDto.Request
         public string product_id { get; set; } = null!;
         public int quantity { get; set; }
     }
-
+    public class ReqRemoveQuantityDto
+    {
+        public List<CartItemDto>? listCartItems { get; set; }
+    }
 }

@@ -46,7 +46,21 @@ namespace CFS_1507.Domain.Entities
         public static CartItemsEntity CreateCartItem(string cart_id, int itemQuantiy, string product_id, ProductEntity product)
         {
             product.UpdateIsInCart(itemQuantiy);
-            return new CartItemsEntity(cart_id, itemQuantiy, product_id);
+            return new CartItemsEntity(cart_id, itemQuantiy, product_id) { Product = product };
+        }
+        public void UpdateCartItemQuantity(int itemQuantiy)
+        {
+            quantity += itemQuantiy;
+        }
+        public void RemoveCartItemQuantity(int itemQuantiy)
+        {
+            if (quantity < itemQuantiy)
+                throw new InvalidOperationException("Invalid quantity remove");
+
+            quantity -= itemQuantiy;
+
+            if (quantity == 0)
+                Product?.UndoIsInCart();
         }
     }
 }

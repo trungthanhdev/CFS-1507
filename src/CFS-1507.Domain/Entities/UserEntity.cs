@@ -83,5 +83,14 @@ namespace CFS_1507.Domain.Entities
             CartEntities.Add(newCart);
             return newCart;
         }
+        public CartItemsEntity AddCartItem(CartEntity cart, ListCartItems cartItems)
+        {
+            var newCartItem = CartEntity.AddItem(cart, cartItems);
+            return newCartItem;
+        }
+        public void RemoveCartItemQuantity(CartEntity cart, CartItemsEntity cartItems, int quantity)
+        {
+            cart.RemoveCartItemQuantity(cartItems, quantity);
+        }
     }
 }

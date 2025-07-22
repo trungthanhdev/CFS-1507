@@ -50,5 +50,30 @@ namespace CFS_1507.Domain.Entities
         {
             this.is_Paid = true;
         }
+
+        public static CartItemsEntity AddItem(CartEntity cart, ListCartItems cartItems)
+        {
+            var existingItem = cart.CartItemsEntities
+                .FirstOrDefault(i => i.product_id == cartItems.product_id);
+
+            if (existingItem != null)
+            {
+                existingItem.UpdateCartItemQuantity(cartItems.quantity);
+                return existingItem;
+            }
+
+            if (string.IsNullOrWhiteSpace(cartItems.product_id))
+                throw new InvalidOperationException("Product_id not found!");
+            if (cartItems.Product is null)
+                throw new InvalidOperationException("Product not found!");
+
+            var newCartItem = CartItemsEntity.CreateCartItem(cart.cart_id, cartItems.quantity, cartItems.product_id, cartItems.Product);
+            cart.CartItemsEntities.Add(newCartItem);
+            return newCartItem;
+        }
+        public void RemoveCartItemQuantity(CartItemsEntity cartItems, int quantity)
+        {
+            cartItems.RemoveCartItemQuantity(quantity);
+        }
     }
 }

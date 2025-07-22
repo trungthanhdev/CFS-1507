@@ -34,44 +34,46 @@ namespace CFS_1507.Application.Usecases.CartUC.Commands
             if (dto is null || !dto.Any())
                 throw new BadHttpRequestException("Cart items are required!");
 
-            var allProducts = await dbContext.ProductEntities
-                .Select(x => new
-                {
-                    x.product_id,
-                    x.product_name
-                })
-                .ToListAsync(cancellationToken);
-            Dictionary<string, string> allProductDict = new Dictionary<string, string>();
-            foreach (var item in allProducts)
-            {
-                if (!allProductDict.ContainsKey(item.product_id))
-                {
-                    allProductDict[item.product_id] = item.product_name ?? "default product";
-                }
-            }
+            var allProductsDict = await dbContext.ProductEntities
+                .ToDictionaryAsync(x => x.product_id, x => x, cancellationToken);
+
 
             List<ListCartItems> listCartItems = new List<ListCartItems>();
             foreach (var item in dto)
             {
-                if (allProductDict.ContainsKey(item.product_id))
+                if (allProductsDict.TryGetValue(item.product_id, out var currentProduct))
                 {
-                    var currentProduct = await dbContext.ProductEntities
-                        .Where(x => x.product_id == item.product_id)
-                        .FirstOrDefaultAsync(cancellationToken);
-                    if (currentProduct is null)
-                        throw new NotFoundException($"Product {item.product_id} not found!");
-
                     var newListCartItem = new ListCartItems
                     {
                         product_id = item.product_id,
-                        product_name = allProductDict[item.product_id],
+                        product_name = currentProduct.product_name ?? "default product",
                         quantity = item.quantity,
                         Product = currentProduct
                     };
                     listCartItems.Add(newListCartItem);
                 }
+                else
+                {
+                    throw new NotFoundException($"Product {item.product_id} not found!");
+                }
             }
-            currentUser.AddToCart(listCartItems);
+
+            var existedCart = await dbContext.CartEntities
+                .Include(x => x.CartItemsEntities)
+                .Where(x => x.user_id == user_id && x.is_Paid == false)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (existedCart is null)
+            {
+                currentUser.AddToCart(listCartItems);
+            }
+            else
+            {
+                foreach (var item in listCartItems)
+                {
+                    currentUser.AddCartItem(existedCart, item);
+                }
+            }
+
             if (await unitOfWork.SaveChangeAsync(cancellationToken) > 0)
             {
                 return new OkResponse($"User {currentUser.userName} adds items to cart successfully!");

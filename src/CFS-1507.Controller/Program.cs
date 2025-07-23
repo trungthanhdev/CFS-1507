@@ -77,6 +77,7 @@ var app = builder.Build();
 new AuthEndpoint().MapEndpoints(app);
 new ProductEndpoint().MapEndpoints(app);
 new CartEndpoint().MapEndpoints(app);
+new MomoEndpoint().MapEndpoints(app);
 // ----------------------------
 if (app.Environment.IsDevelopment())
 {

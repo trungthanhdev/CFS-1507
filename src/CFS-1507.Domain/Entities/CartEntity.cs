@@ -48,7 +48,7 @@ namespace CFS_1507.Domain.Entities
         }
         public void CartPaid()
         {
-            this.is_Paid = true;
+            is_Paid = true;
         }
 
         public static CartItemsEntity AddItem(CartEntity cart, ListCartItems cartItems)
@@ -74,6 +74,11 @@ namespace CFS_1507.Domain.Entities
         public void RemoveCartItemQuantity(CartItemsEntity cartItems, int quantity)
         {
             cartItems.RemoveCartItemQuantity(quantity);
+        }
+        public OrderEntity CreateOrder(string cart_id, string user_id)
+        {
+            var newOrder = OrderEntity.CreateOrder(cart_id, user_id);
+            return newOrder;
         }
     }
 }

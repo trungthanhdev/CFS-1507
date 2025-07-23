@@ -25,5 +25,6 @@ public static class InfrastructureInjection
         services.AddScoped(typeof(IRepositoryDefinition<>), typeof(RepositoryDefinition<>));
         services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
         services.AddScoped<ILocalStorage, LocalStorage>();
+        services.AddScoped<MomoService>();
     }
 }

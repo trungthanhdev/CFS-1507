@@ -44,5 +44,9 @@ namespace CFS_1507.Domain.Entities
         {
             return new OrderEntity(cart_id, user_id);
         }
+        public OrderItemsEntity AddToOrderItems(string order_id, string product_id, int quantity)
+        {
+            return OrderItemsEntity.CreateOrderItem(order_id, product_id, quantity);
+        }
     }
 }

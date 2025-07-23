@@ -19,6 +19,8 @@ namespace CFS_1507.Domain.Entities
         [ForeignKey(nameof(Product))]
         public string product_id { get; set; } = null!;
         public ProductEntity? Product { get; set; }
+        public DateTimeOffset? created_at { get; set; }
+        public DateTimeOffset? updated_at { get; set; }
         private CartItemsEntity() { }
         private CartItemsEntity(string cart_id, int quantity, string product_id)
         {
@@ -26,6 +28,8 @@ namespace CFS_1507.Domain.Entities
             this.cart_id = cart_id;
             this.quantity = quantity;
             this.product_id = product_id;
+            this.created_at = DateTimeOffset.UtcNow;
+            this.updated_at = DateTimeOffset.UtcNow;
             CheckValid();
         }
         private void CheckValid()

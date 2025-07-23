@@ -32,6 +32,13 @@ namespace CFS_1507.Domain.Entities
             this.product_description = product_description;
             this.product_image = product_image;
             this.is_in_stock = is_in_stock;
+
+            CheckValid();
+        }
+        public void CheckValid()
+        {
+            if (string.IsNullOrWhiteSpace(product_name))
+                throw new InvalidOperationException("Product name is required!");
         }
         public static ProductEntity Create(string product_name, double? product_price, string? product_description, string? product_image, int is_in_stock)
         {

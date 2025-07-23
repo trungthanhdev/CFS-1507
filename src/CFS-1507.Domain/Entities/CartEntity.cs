@@ -20,7 +20,7 @@ namespace CFS_1507.Domain.Entities
         public UserEntity? User { get; set; }
         public DateTimeOffset? created_at { get; set; }
         public DateTimeOffset? updated_at { get; set; }
-        public OrderEntity? Order { get; set; }
+        public virtual List<OrderEntity>? Order { get; set; } = [];
         public virtual List<CartItemsEntity> CartItemsEntities { get; set; } = [];
         private CartEntity() { }
         private CartEntity(string user_id)
@@ -41,7 +41,7 @@ namespace CFS_1507.Domain.Entities
                 if (item.Product is null)
                     throw new InvalidOperationException("Product not found!");
 
-                var newCartItem = CartItemsEntity.CreateCartItem(newCart.cart_id, item.quantity, item.product_id, item.Product);
+                var newCartItem = CartItemsEntity.CreateCartItem(newCart.cart_id, item.quantity, item.product_id, item.product_price, item.Product);
                 newCart.CartItemsEntities.Add(newCartItem);
             }
             return newCart;
@@ -67,13 +67,21 @@ namespace CFS_1507.Domain.Entities
             if (cartItems.Product is null)
                 throw new InvalidOperationException("Product not found!");
 
-            var newCartItem = CartItemsEntity.CreateCartItem(cart.cart_id, cartItems.quantity, cartItems.product_id, cartItems.Product);
+            var newCartItem = CartItemsEntity.CreateCartItem(cart.cart_id, cartItems.quantity, cartItems.product_id, cartItems.product_price, cartItems.Product);
             cart.CartItemsEntities.Add(newCartItem);
             return newCartItem;
         }
         public void RemoveCartItemQuantity(CartItemsEntity cartItems, int quantity)
         {
             cartItems.RemoveCartItemQuantity(quantity);
+        }
+        public void ChangeStatusToInProcess(CartItemsEntity cartItem)
+        {
+            cartItem.ChangeStatusToInProcess();
+        }
+        public void ChangeStatusToCompleted(CartItemsEntity cartItem)
+        {
+            cartItem.ChangeStatusToCompleted();
         }
         public OrderEntity CreateOrder(string cart_id, string user_id)
         {

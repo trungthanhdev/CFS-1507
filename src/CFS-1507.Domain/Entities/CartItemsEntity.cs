@@ -14,20 +14,24 @@ namespace CFS_1507.Domain.Entities
         public string cart_item_id { get; set; } = null!;
         [ForeignKey(nameof(Cart))]
         public string cart_id { get; set; } = null!;
+        public string status { get; set; } = null!;
         public CartEntity? Cart { get; set; }
         public int quantity { get; set; }
+        public double product_price { get; set; }
         [ForeignKey(nameof(Product))]
         public string product_id { get; set; } = null!;
         public ProductEntity? Product { get; set; }
         public DateTimeOffset? created_at { get; set; }
         public DateTimeOffset? updated_at { get; set; }
         private CartItemsEntity() { }
-        private CartItemsEntity(string cart_id, int quantity, string product_id)
+        private CartItemsEntity(string cart_id, int quantity, string product_id, double product_price)
         {
             this.cart_item_id = Guid.NewGuid().ToString();
             this.cart_id = cart_id;
             this.quantity = quantity;
             this.product_id = product_id;
+            this.product_price = product_price;
+            this.status = "PENDING";
             this.created_at = DateTimeOffset.UtcNow;
             this.updated_at = DateTimeOffset.UtcNow;
             CheckValid();
@@ -47,10 +51,18 @@ namespace CFS_1507.Domain.Entities
                 throw new InvalidOperationException("Quantiy must be greater than 0");
             }
         }
-        public static CartItemsEntity CreateCartItem(string cart_id, int itemQuantiy, string product_id, ProductEntity product)
+        public void ChangeStatusToInProcess()
+        {
+            this.status = "IN_PROCESS";
+        }
+        public void ChangeStatusToCompleted()
+        {
+            this.status = "COMPLETED";
+        }
+        public static CartItemsEntity CreateCartItem(string cart_id, int itemQuantiy, string product_id, double product_price, ProductEntity product)
         {
             product.UpdateIsInCart(itemQuantiy);
-            return new CartItemsEntity(cart_id, itemQuantiy, product_id) { Product = product };
+            return new CartItemsEntity(cart_id, itemQuantiy, product_id, product_price) { Product = product };
         }
         public void UpdateCartItemQuantity(int itemQuantiy)
         {

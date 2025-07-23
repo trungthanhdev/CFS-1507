@@ -11,6 +11,7 @@ namespace CFS_1507.Domain.DTOs
         public string? product_id { get; set; }
         public string? product_name { get; set; }
         public int quantity { get; set; }
+        public double product_price { get; set; }
         public ProductEntity? Product { get; set; }
     }
 }

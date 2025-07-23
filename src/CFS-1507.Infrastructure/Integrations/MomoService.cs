@@ -75,7 +75,6 @@ namespace CFS_1507.Infrastructure.Integrations
             string responseBody = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
-
                 throw new Exception($"Momo error: {responseBody}");
             }
             // Console.WriteLine($"Response: {responseBody}");
@@ -114,7 +113,7 @@ namespace CFS_1507.Infrastructure.Integrations
     public class OrderInfoModel
     {
         public string CartId { get; set; } = null!;
-        public int Amount { get; set; }
+        public double Amount { get; set; }
         public string OrderInfo { get; set; } = null!;
     }
 

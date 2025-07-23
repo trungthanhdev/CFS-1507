@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using CFS_1507.Application.Usecases.MomoUC.Commands;
 using CFS_1507.Application.Usecases.OrderUC.Commands;
+using CFS_1507.Contract.DTOs.CartDto.Request;
 using CFS_1507.Contract.DTOs.MomoDto.Request;
 using CFS_1507.Infrastructure.Integrations;
+using CTCore.DynamicQuery.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +26,7 @@ namespace CFS_1507.Controller.Endpoint
             return endpoints;
         }
         public async Task<IResult> PayByMomo(
-           [FromBody] OrderInfoModel arg,
+           [FromBody] ReqChooseCartItemsDto arg,
            [FromServices] IMediator mediator)
         {
             try
@@ -33,6 +35,10 @@ namespace CFS_1507.Controller.Endpoint
                 return Results.Ok(new { success = 200, result });
             }
             catch (BadHttpRequestException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 400);
+            }
+            catch (NotFoundException ex)
             {
                 return Results.Problem(ex.Message, statusCode: 400);
             }
@@ -61,6 +67,7 @@ namespace CFS_1507.Controller.Endpoint
                     }
                     if (arg.ResultCode == 1006)
                     {
+                        var result = await mediator.Send(new OrderSuccessfullyCommand(cart_id));
                         System.Console.WriteLine($"statuscode: {arg.ResultCode}, msg: {arg.Message}");
                         return Results.Ok(new { success = true, msg = "User canceled!" });
                     }

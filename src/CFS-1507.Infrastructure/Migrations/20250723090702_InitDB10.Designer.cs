@@ -3,6 +3,7 @@ using System;
 using CFS_1507.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CFS_1507.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250723090702_InitDB10")]
+    partial class InitDB10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,10 +141,6 @@ namespace CFS_1507.Infrastructure.Migrations
                     b.Property<int>("quantity")
                         .HasColumnType("integer");
 
-                    b.Property<string>("status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<DateTimeOffset?>("updated_at")
                         .HasColumnType("timestamp with time zone");
 
@@ -206,7 +205,8 @@ namespace CFS_1507.Infrastructure.Migrations
 
                     b.HasKey("order_id");
 
-                    b.HasIndex("cart_id");
+                    b.HasIndex("cart_id")
+                        .IsUnique();
 
                     b.ToTable("OrderEntities");
                 });
@@ -447,8 +447,8 @@ namespace CFS_1507.Infrastructure.Migrations
             modelBuilder.Entity("CFS_1507.Domain.Entities.OrderEntity", b =>
                 {
                     b.HasOne("CFS_1507.Domain.Entities.CartEntity", "Cart")
-                        .WithMany("Order")
-                        .HasForeignKey("cart_id");
+                        .WithOne("Order")
+                        .HasForeignKey("CFS_1507.Domain.Entities.OrderEntity", "cart_id");
 
                     b.Navigation("Cart");
                 });

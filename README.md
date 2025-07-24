@@ -59,15 +59,15 @@ A backend RESTful API developed with **.NET 9**, serving as the foundation for a
 ### 🛠 Setup with VSCode
 
 ```bash
-cd ./src/CFS-1507.Infrastructure
+cd /src/CFS-1507.Infrastructure
 dotnet restore
-
-cd ../CFS-1507.Controller
+cd /src/CFS-1507.Controller
 dotnet run
 ```
 
 ### 🛠 Setup with Docker
 
-bash
-cd ./src
+```bash
+cd /src
 docker compose up --build
+```

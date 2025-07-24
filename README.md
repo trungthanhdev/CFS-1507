@@ -52,7 +52,8 @@ A backend RESTful API developed with **.NET 9**, serving as the foundation for a
 - [.NET SDK 9.0+](https://dotnet.microsoft.com/download)
 - PostgreSQL connection string (Neon or local)
 - (Optional) Redis, Cloudinary, SendGrid credentials
-- `.env` and `docker-compose.yml` in `CFS-1507.Controller`
+- Create `.env` in `/CFS-1507.Controller`
+- Create `docker-compose.yml` in `/src`
 
 ---
 

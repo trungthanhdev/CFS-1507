@@ -65,3 +65,9 @@ dotnet restore
 cd ../CFS-1507.Controller
 dotnet run
 ```
+
+### 🛠 Setup with Docker
+
+bash
+cd ./src
+docker compose up --build

@@ -32,7 +32,8 @@ namespace CFS_1507.Domain.Entities
             this.product_description = product_description;
             this.product_image = product_image;
             this.is_in_stock = is_in_stock;
-
+            this.created_at = DateTimeOffset.UtcNow;
+            this.updated_at = DateTimeOffset.UtcNow;
             CheckValid();
         }
         public void CheckValid()
@@ -69,12 +70,24 @@ namespace CFS_1507.Domain.Entities
         {
             CheckQuantity(quantity);
             is_in_cart += 1;
+            this.updated_at = DateTimeOffset.UtcNow;
         }
         public void UndoIsInCart()
         {
             is_in_cart -= 1;
             if (is_in_cart < 0)
                 is_in_cart = 0;
+            this.updated_at = DateTimeOffset.UtcNow;
+        }
+        public void InCreaseIsBought(int quantity)
+        {
+            if (quantity < 0)
+                throw new ArgumentException("Quantity must be greater than or equal to 0");
+            if (is_in_stock < quantity)
+                throw new ArgumentException($"In stock: {is_in_stock}");
+            this.is_in_stock -= quantity;
+            this.is_bought += quantity;
+            this.updated_at = DateTimeOffset.UtcNow;
         }
     }
 }

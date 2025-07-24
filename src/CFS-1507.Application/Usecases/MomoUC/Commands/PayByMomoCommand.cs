@@ -48,7 +48,7 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
                 throw new BadHttpRequestException("CartId is requestId!");
             //2:
             var user_id = userIdentifyService.GetUserId();
-            int amount = 0;
+            double amount = 0;
 
             var currentCart = await dbContext.CartEntities
                 .Where(x => x.cart_id == dto.CartId && x.is_Paid == false && x.user_id == user_id)
@@ -65,9 +65,14 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
                 //3.1:
                 currentCart.ChangeStatusToInProcess(cartItem);
                 //3.2:
-                amount += (int)cartItem.product_price * item.quantity;
+                var totalItemPrice = cartItem.product_price * item.quantity;
+                amount += totalItemPrice;
+                // System.Console.WriteLine($"in totalItemPrice: {totalItemPrice}");
+                // System.Console.WriteLine($"in foreach quantity: {item.quantity}");
+                // System.Console.WriteLine($"in foreach price: {cartItem.product_price}");
+                // System.Console.WriteLine($"in foreach amount: {amount}");
             }
-
+            System.Console.WriteLine($"amount: {amount}");
             var newOrderModel = new OrderInfoModel
             {
                 CartId = dto.CartId,
@@ -83,6 +88,7 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
             {
                 return createMomoMethod;
             }
+            await unitOfWork.RollbackAsync();
             throw new InvalidOperationException("Fail to save, nothing changes!");
         }
     }

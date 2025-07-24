@@ -54,10 +54,12 @@ namespace CFS_1507.Domain.Entities
         public void ChangeStatusToInProcess()
         {
             this.status = "IN_PROCESS";
+            this.updated_at = DateTimeOffset.UtcNow;
         }
         public void ChangeStatusToCompleted()
         {
             this.status = "COMPLETED";
+            this.updated_at = DateTimeOffset.UtcNow;
         }
         public static CartItemsEntity CreateCartItem(string cart_id, int itemQuantiy, string product_id, double product_price, ProductEntity product)
         {
@@ -67,6 +69,7 @@ namespace CFS_1507.Domain.Entities
         public void UpdateCartItemQuantity(int itemQuantiy)
         {
             quantity += itemQuantiy;
+            this.updated_at = DateTimeOffset.UtcNow;
         }
         public void RemoveCartItemQuantity(int itemQuantiy)
         {
@@ -77,6 +80,7 @@ namespace CFS_1507.Domain.Entities
 
             if (quantity == 0)
                 Product?.UndoIsInCart();
+            this.updated_at = DateTimeOffset.UtcNow;
         }
     }
 }

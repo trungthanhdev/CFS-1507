@@ -22,7 +22,9 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
     public class LoginCommandHandler(
         AppDbContext dbContext,
         ICheckInstanceOfTEntityClass<UserEntity> userCheck,
-        TokenService tokenService
+        TokenService tokenService,
+        ICheckInstanceOfTEntityClass<AttachToEntity> attachToCheck,
+        ICheckInstanceOfTEntityClass<RoleEntity> roleCheck
     ) : IRequestHandler<LoginCommand, ResponseAuthDto>
     {
         public async Task<ResponseAuthDto> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -37,9 +39,14 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
             if (is_Verified == false)
                 throw new UnauthorizedAccessException("Password invalid!");
 
+            var userRole = await dbContext.AttachToEntities.Where(x => x.user_id == currentUser.user_id).FirstOrDefaultAsync(cancellationToken);
+            userRole = attachToCheck.CheckNullOrNot(userRole, "Role attached");
+            var userRoleName = await dbContext.RoleEntities.Where(x => x.role_id == userRole.role_id).FirstOrDefaultAsync(cancellationToken);
+            userRoleName = roleCheck.CheckNullOrNot(userRoleName, "Role");
+
             var access_token = await tokenService.GenerateToken(currentUser, true);
             var refresh_token = await tokenService.GenerateToken(currentUser, false);
-            return new ResponseAuthDto { access_token = access_token, refresh_token = refresh_token, user_name = currentUser.userName, user_id = currentUser.user_id };
+            return new ResponseAuthDto { access_token = access_token, refresh_token = refresh_token, user_name = currentUser.userName, user_id = currentUser.user_id, role = userRoleName.role_name };
         }
     }
 }

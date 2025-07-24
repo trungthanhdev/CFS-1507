@@ -48,6 +48,7 @@ namespace CFS_1507.Application.Usecases.CartUC.Commands
                         product_id = item.product_id,
                         product_name = currentProduct.product_name ?? "default product",
                         quantity = item.quantity,
+                        product_price = item.product_price,
                         Product = currentProduct
                     };
                     listCartItems.Add(newListCartItem);

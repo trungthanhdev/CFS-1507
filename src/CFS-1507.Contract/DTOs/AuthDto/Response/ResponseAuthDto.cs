@@ -11,5 +11,6 @@ namespace CFS_1507.Contract.DTOs.AuthDto.Response
         public string? refresh_token { get; set; }
         public string? user_name { get; set; }
         public string? user_id { get; set; }
+        public string? role { get; set; }
     }
 }

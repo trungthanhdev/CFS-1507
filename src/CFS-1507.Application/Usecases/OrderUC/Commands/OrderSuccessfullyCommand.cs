@@ -17,7 +17,7 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
     //step:
     //1: Find cart based on cart_id.
     //2: Filter cart items with status == "IN_PROCESS".
-    //3: Create OrderEntity and corresponding OrderItemsEntity.
+    //3: Create OrderEntity and corresponding OrderItemsEntity and update product's is_bouhgt.
     //4: Check how many cartItem "PENDING" in cart? if == 0 => updateCartStatus
     //5: Save to DB via unitOfWork.
 
@@ -43,19 +43,31 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
             currentCart = cartCheck.CheckNullOrNot(currentCart, "Current cart");
             //2:
             var cartItemList = await dbContext.CartItemsEntities
+                .Include(x => x.Product)
                 .Where(x => x.cart_id == currentCart.cart_id && x.status == "IN_PROCESS")
                 .ToListAsync(cancellationToken);
             //3:
             var newOrder = currentCart.CreateOrder(currentCart.cart_id, currentCart.user_id);
             List<OrderItemsEntity> orderItemList = new List<OrderItemsEntity>();
+            Dictionary<string, int> productIDDict = new Dictionary<string, int>();
             foreach (var item in cartItemList)
             {
                 currentCart.ChangeStatusToCompleted(item);
                 var newOrderItem = newOrder.AddToOrderItems(newOrder.order_id, item.product_id, item.quantity);
                 orderItemList.Add(newOrderItem);
+                productIDDict[item.product_id] = item.quantity;
+                item.Product?.UndoIsInCart();
             }
             orderRepo.Add(new List<OrderEntity> { newOrder });
             orderItemsRepo.Add(orderItemList);
+            var listProductBought = await dbContext.ProductEntities
+                .Where(x => productIDDict.Keys.Contains(x.product_id))
+                .ToListAsync(cancellationToken);
+            foreach (var item in listProductBought)
+            {
+                item.InCreaseIsBought(productIDDict[item.product_id]);
+            }
+            ;
             //4:
             var stillPendingItems = await dbContext.CartItemsEntities
                 .Where(x => x.cart_id == currentCart.cart_id && x.status == "PENDING")

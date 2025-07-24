@@ -23,7 +23,6 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
     public class RegisterCommandHandler(
         IRepositoryDefinition<UserEntity> userRepo,
         AppDbContext dbContext,
-        // ILogger<RegisterCommand> logger,
         IUnitOfWork unitOfWork,
         TokenService tokenService
     ) : IRequestHandler<RegisterCommand, ResponseAuthDto>

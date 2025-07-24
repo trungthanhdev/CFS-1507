@@ -26,7 +26,8 @@ namespace CFS_1507.Application.Usecases.CartUC.Commands
         IUnitOfWork unitOfWork,
         UserIdentifyService userIdentifyService,
         AppDbContext dbContext,
-        IRepositoryDefinition<CartItemsEntity> cartItemRepo
+        IRepositoryDefinition<CartItemsEntity> cartItemRepo,
+        ICheckInstanceOfTEntityClass<CartEntity> cartCheck
     ) : IRequestHandler<RemoveCartItemsQuantityCommand, OkResponse>
     {
         public async Task<OkResponse> Handle(RemoveCartItemsQuantityCommand request, CancellationToken cancellationToken)
@@ -37,8 +38,7 @@ namespace CFS_1507.Application.Usecases.CartUC.Commands
             var currentCart = await dbContext.CartEntities
                 .Where(x => x.user_id == user_id && x.is_Paid == false)
                 .FirstOrDefaultAsync(cancellationToken);
-            if (currentCart is null)
-                throw new NotFoundException("Current cart not found!");
+            currentCart = cartCheck.CheckNullOrNot(currentCart, "Current cart");
 
             if (request.Arg.listCartItems == null || !request.Arg.listCartItems.Any())
                 throw new BadHttpRequestException("List product_id is null or empty!");

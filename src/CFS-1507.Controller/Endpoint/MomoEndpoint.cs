@@ -67,7 +67,7 @@ namespace CFS_1507.Controller.Endpoint
                     }
                     if (arg.ResultCode == 1006)
                     {
-                        var result = await mediator.Send(new OrderSuccessfullyCommand(cart_id));
+                        var result = await mediator.Send(new OrderSuccessfullyCommand(cart_id));// dung de test chuc nang thanh toan thanh cong
                         System.Console.WriteLine($"statuscode: {arg.ResultCode}, msg: {arg.Message}");
                         return Results.Ok(new { success = true, msg = "User canceled!" });
                     }

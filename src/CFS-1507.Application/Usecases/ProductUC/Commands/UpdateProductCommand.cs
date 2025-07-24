@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using CFS_1507.Contract.DTOs.ProductDto.Request;
 using CFS_1507.Contract.Helper;
+using CFS_1507.Domain.Entities;
+using CFS_1507.Domain.Interfaces;
 using CFS_1507.Infrastructure.Persistence;
 using CTCore.DynamicQuery.Common.Exceptions;
 using CTCore.DynamicQuery.Core.Domain.Interfaces;
@@ -24,7 +26,11 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
     public class UpdateProductCommandHandler(
         IUnitOfWork unitOfWork,
         AppDbContext dbContext,
-        UserIdentifyService userIdentify
+        UserIdentifyService userIdentify,
+        ICheckInstanceOfTEntityClass<ProductEntity> productCheck,
+        ICheckInstanceOfTEntityClass<UserEntity> userCheck,
+        ICheckInstanceOfTEntityClass<TranslateEntity> productTranslateCheck
+
     ) : IRequestHandler<UpdateProductCommand, OkResponse>
     {
         public async Task<OkResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -34,20 +40,17 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
                 .AsNoTracking()
                 .Where(x => x.user_id == user_id)
                 .FirstOrDefaultAsync(cancellationToken);
-            if (currentUser is null)
-                throw new NotFoundException("Current user not found!");
+            currentUser = userCheck.CheckNullOrNot(currentUser, "Current user");
 
             var currentProduct = await dbContext.ProductEntities
                 .Where(x => x.product_id == request.Product_id)
                 .FirstOrDefaultAsync(cancellationToken);
-            if (currentProduct is null)
-                throw new NotFoundException("Current product not found!");
+            currentProduct = productCheck.CheckNullOrNot(currentProduct, "Current product");
 
             var currentProductTranslate = await dbContext.TranslateEntities
                 .Where(x => x.product_id == request.Product_id)
                 .FirstOrDefaultAsync(cancellationToken);
-            if (currentProductTranslate is null)
-                throw new NotFoundException("Current product translate not found!");
+            currentProductTranslate = productTranslateCheck.CheckNullOrNot(currentProductTranslate, "Current product translate");
 
             if (string.IsNullOrWhiteSpace(request.Arg.translate_description) && request.Arg.product_description != null)
             {

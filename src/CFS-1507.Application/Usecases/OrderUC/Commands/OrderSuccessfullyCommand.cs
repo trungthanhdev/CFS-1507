@@ -29,7 +29,8 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
         AppDbContext dbContext,
         IUnitOfWork unitOfWork,
         IRepositoryDefinition<OrderEntity> orderRepo,
-        IRepositoryDefinition<OrderItemsEntity> orderItemsRepo
+        IRepositoryDefinition<OrderItemsEntity> orderItemsRepo,
+        ICheckInstanceOfTEntityClass<CartEntity> cartCheck
     ) : IRequestHandler<OrderSuccessfullyCommand, OkResponse>
     {
         public async Task<OkResponse> Handle(OrderSuccessfullyCommand request, CancellationToken cancellationToken)
@@ -39,8 +40,7 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
                 .Include(x => x.CartItemsEntities)
                 .Where(x => x.cart_id == request.Cart_id)
                 .FirstOrDefaultAsync(cancellationToken);
-            if (currentCart is null)
-                throw new NotFoundException("Current cart not found!");
+            currentCart = cartCheck.CheckNullOrNot(currentCart, "Current cart");
             //2:
             var cartItemList = await dbContext.CartItemsEntities
                 .Where(x => x.cart_id == currentCart.cart_id && x.status == "IN_PROCESS")

@@ -23,7 +23,8 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
     public class ChangePassWordCommandHandler(
         IHttpContextAccessor httpContextAccessor,
         AppDbContext dbContext,
-        IUnitOfWork unitOfWork
+        IUnitOfWork unitOfWork,
+        ICheckInstanceOfTEntityClass<UserEntity> userCheck
     ) : IRequestHandler<ChangePassWordCommand, OkResponse>
     {
         public async Task<OkResponse> Handle(ChangePassWordCommand request, CancellationToken cancellationToken)
@@ -32,7 +33,7 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
             if (user_id is null) throw new NotFoundException("User_id from token not found!");
 
             var currentUser = await dbContext.UserEntities.Where(x => x.user_id == user_id).FirstOrDefaultAsync(cancellationToken);
-            if (currentUser is null) throw new NotFoundException("Current user not found!");
+            currentUser = userCheck.CheckNullOrNot(currentUser, "Current user");
 
             var checkPass = currentUser.CheckPassword(request.Arg.old_pass);
             if (checkPass == false) throw new UnauthorizedAccessException("Old password invalid!");

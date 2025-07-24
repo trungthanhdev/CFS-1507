@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using CFS_1507.Application.Services.TokenService;
 using CFS_1507.Contract.DTOs.AuthDto.Request;
 using CFS_1507.Contract.DTOs.AuthDto.Response;
+using CFS_1507.Domain.Entities;
+using CFS_1507.Domain.Interfaces;
 using CFS_1507.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -19,7 +21,7 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
     }
     public class LoginCommandHandler(
         AppDbContext dbContext,
-        // ILogger<LoginCommand> logger,
+        ICheckInstanceOfTEntityClass<UserEntity> userCheck,
         TokenService tokenService
     ) : IRequestHandler<LoginCommand, ResponseAuthDto>
     {
@@ -29,7 +31,7 @@ namespace CFS_1507.Application.Usecases.AuthUC.Commands
                 throw new BadHttpRequestException("User name and Password are required!");
 
             var currentUser = await dbContext.UserEntities.Where(x => x.userName == request.Arg.username).FirstOrDefaultAsync(cancellationToken);
-            if (currentUser is null) throw new UnauthorizedAccessException("User not found!");
+            currentUser = userCheck.CheckNullOrNot(currentUser, "Current user");
 
             var is_Verified = currentUser.CheckPassword(request.Arg.password);
             if (is_Verified == false)

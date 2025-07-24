@@ -24,7 +24,6 @@ namespace CFS_1507.Domain.Entities
         public virtual List<BlackListEntity> BlackListEntities { get; set; } = [];
         public virtual List<AttachToEntity> AttachToEntities { get; set; } = [];
         public virtual List<CartEntity> CartEntities { get; set; } = [];
-
         public UserEntity() { }
         private UserEntity(string userName, string? email, string hashPassWord)
         {
@@ -44,14 +43,12 @@ namespace CFS_1507.Domain.Entities
         {
             return BCrypt.Net.BCrypt.Verify(rawPassWord, this.hashPassWord);
         }
-
         public void ChangePassword(string newPassword)
         {
             var newHashPassWord = BCrypt.Net.BCrypt.HashPassword(newPassword);
             this.hashPassWord = newHashPassWord;
             this.updated_at = DateTimeOffset.UtcNow;
         }
-
         public void AddRole(string role_id)
         {
             if (!AttachToEntities.Any(r => r.role_id == role_id))
@@ -76,7 +73,6 @@ namespace CFS_1507.Domain.Entities
         {
             product.ToggleDeleteProduct();
         }
-
         public CartEntity AddToCart(List<ListCartItems> listCartItems)
         {
             var newCart = CartEntity.CreateCart(this.user_id, listCartItems);

@@ -50,7 +50,6 @@ namespace CFS_1507.Domain.Entities
         {
             is_Paid = true;
         }
-
         public static CartItemsEntity AddItem(CartEntity cart, ListCartItems cartItems)
         {
             var existingItem = cart.CartItemsEntities

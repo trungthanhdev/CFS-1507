@@ -1,4 +1,6 @@
-﻿using CFS_1507.Domain.Interfaces;
+﻿using CFS_1507.Domain.Common;
+using CFS_1507.Domain.Interfaces;
+using CFS_1507.Infrastructure.Helper;
 using CFS_1507.Infrastructure.Integrations;
 using CFS_1507.Infrastructure.Persistence;
 using CFS_1507.Infrastructure.Persistence.Repositories;
@@ -26,5 +28,6 @@ public static class InfrastructureInjection
         services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
         services.AddScoped<ILocalStorage, LocalStorage>();
         services.AddScoped<MomoService>();
+        services.AddScoped(typeof(ICheckInstanceOfTEntityClass<>), typeof(CheckInstanceOfTEntityClass<>));
     }
 }

@@ -78,6 +78,7 @@ new AuthEndpoint().MapEndpoints(app);
 new ProductEndpoint().MapEndpoints(app);
 new CartEndpoint().MapEndpoints(app);
 new MomoEndpoint().MapEndpoints(app);
+new CategoryEndpoint().MapEndpoints(app);
 // ----------------------------
 if (app.Environment.IsDevelopment())
 {

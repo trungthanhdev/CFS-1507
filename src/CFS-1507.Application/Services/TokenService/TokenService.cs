@@ -57,10 +57,15 @@ namespace CFS_1507.Application.Services.TokenService
                 var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
                 return Options.Create(principal);
             }
-            catch (System.Exception ex)
+            catch (SecurityTokenExpiredException ex)
             {
-                _logger.LogError($"Error when Create principal: {ex.Message}");
-                throw;
+                _logger.LogWarning("Token expired: " + ex.Message);
+                throw new UnauthorizedAccessException("Token expired");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Token invalid: " + ex.Message);
+                throw new UnauthorizedAccessException("Token invalid");
             }
         }
 

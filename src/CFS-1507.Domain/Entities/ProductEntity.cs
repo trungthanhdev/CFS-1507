@@ -4,10 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using CFS_1507.Domain.Common;
+using CFS_1507.Domain.Interfaces;
 
 namespace CFS_1507.Domain.Entities
 {
-    public class ProductEntity : TEntityClass
+    public class ProductEntity : TEntityClass, IAggregrationRoot
     {
         [Key]
         public string product_id { get; set; } = null!;
@@ -23,6 +24,7 @@ namespace CFS_1507.Domain.Entities
         public DateTimeOffset? updated_at { get; set; } = DateTimeOffset.UtcNow;
         public virtual List<TranslateEntity> TranslateEntities { get; set; } = [];
         public virtual List<CartItemsEntity> CartItemsEntities { get; set; } = [];
+        public virtual List<ProductCateEntity> ProductCateEntities { get; set; } = [];
         private ProductEntity() { }
         private ProductEntity(string product_name, double? product_price, string? product_description, string? product_image, int is_in_stock)
         {
@@ -40,10 +42,16 @@ namespace CFS_1507.Domain.Entities
         {
             if (string.IsNullOrWhiteSpace(product_name))
                 throw new InvalidOperationException("Product name is required!");
+            if (product_price < 0)
+                throw new InvalidOperationException("Product price can not be negative");
+            if (is_in_stock < 0)
+                throw new InvalidOperationException("Stock can not be negative");
         }
-        public static ProductEntity Create(string product_name, double? product_price, string? product_description, string? product_image, int is_in_stock)
+        public static ProductEntity Create(string product_name, double? product_price, string? product_description, string? product_image, int is_in_stock, string category_id)
         {
-            return new ProductEntity(product_name, product_price, product_description, product_image, is_in_stock);
+            var newProduct = new ProductEntity(product_name, product_price, product_description, product_image, is_in_stock);
+            newProduct.AddProductCategory(category_id);
+            return newProduct;
         }
         public void Update(string? product_name, string? product_image, string? product_description, double? product_price, int? is_in_stock)
         {
@@ -88,6 +96,12 @@ namespace CFS_1507.Domain.Entities
             this.is_in_stock -= quantity;
             this.is_bought += quantity;
             this.updated_at = DateTimeOffset.UtcNow;
+        }
+        public ProductCateEntity AddProductCategory(string category_id)
+        {
+            var addCategory = ProductCateEntity.CreateProductCategory(this.product_id, category_id);
+            ProductCateEntities.Add(addCategory);
+            return addCategory;
         }
     }
 }

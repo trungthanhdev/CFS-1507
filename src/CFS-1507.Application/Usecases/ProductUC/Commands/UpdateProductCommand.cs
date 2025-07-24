@@ -29,8 +29,9 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
         UserIdentifyService userIdentify,
         ICheckInstanceOfTEntityClass<ProductEntity> productCheck,
         ICheckInstanceOfTEntityClass<UserEntity> userCheck,
-        ICheckInstanceOfTEntityClass<TranslateEntity> productTranslateCheck
-
+        ICheckInstanceOfTEntityClass<TranslateEntity> productTranslateCheck,
+        ICheckInstanceOfTEntityClass<CategoryEntity> cateCheck,
+        ICheckInstanceOfTEntityClass<ProductCateEntity> productCateCheck
     ) : IRequestHandler<UpdateProductCommand, OkResponse>
     {
         public async Task<OkResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -46,6 +47,15 @@ namespace CFS_1507.Application.Usecases.ProductUC.Commands
                 .Where(x => x.product_id == request.Product_id)
                 .FirstOrDefaultAsync(cancellationToken);
             currentProduct = productCheck.CheckNullOrNot(currentProduct, "Current product");
+
+            if (!string.IsNullOrWhiteSpace(request.Arg.category_id))
+            {
+                var currentProductCate = await dbContext.ProductCateEntities.Where(x => x.product_id == currentProduct.product_id).FirstOrDefaultAsync(cancellationToken);
+                currentProductCate = productCateCheck.CheckNullOrNot(currentProductCate, "Current category");
+                var newCate = await dbContext.CategoryEntities.Where(x => x.category_id == request.Arg.category_id).FirstOrDefaultAsync(cancellationToken);
+                newCate = cateCheck.CheckNullOrNot(newCate, "New category");
+                currentUser.UpdateProductCategory(currentProductCate, newCate.category_id);
+            }
 
             var currentProductTranslate = await dbContext.TranslateEntities
                 .Where(x => x.product_id == request.Product_id)

@@ -14,6 +14,7 @@ namespace CFS_1507.Contract.DTOs.ProductDto.Request
         public string? translate_description { get; set; }
         public double? product_price { get; set; }
         public int is_in_stock { get; set; }
+        public string? category_id { get; set; }
         public IFormFile? product_image { get; set; }
     }
 }

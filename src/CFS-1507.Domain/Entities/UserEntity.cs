@@ -88,5 +88,19 @@ namespace CFS_1507.Domain.Entities
         {
             cart.RemoveCartItemQuantity(cartItems, quantity);
         }
+        public CategoryEntity CreateNewCategory(string category_name)
+        {
+            var newCategory = CategoryEntity.CreateCategory(category_name);
+            return newCategory;
+        }
+        public void UpdateCategory(CategoryEntity category, string new_category_name)
+        {
+            if (!string.IsNullOrWhiteSpace(new_category_name))
+                category.category_name = new_category_name ?? category.category_name;
+        }
+        public void UpdateProductCategory(ProductCateEntity category, string new_category_id)
+        {
+            category.UpdateCate(new_category_id);
+        }
     }
 }

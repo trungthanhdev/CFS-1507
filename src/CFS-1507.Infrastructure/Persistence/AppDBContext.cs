@@ -25,6 +25,8 @@ namespace CFS_1507.Infrastructure.Persistence
         public DbSet<CartItemsEntity> CartItemsEntities { get; set; }
         public DbSet<OrderEntity> OrderEntities { get; set; }
         public DbSet<OrderItemsEntity> OrderItemsEntities { get; set; }
+        public DbSet<CategoryEntity> CategoryEntities { get; set; }
+        public DbSet<ProductCateEntity> ProductCateEntities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

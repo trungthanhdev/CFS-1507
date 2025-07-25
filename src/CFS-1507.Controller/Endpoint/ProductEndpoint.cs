@@ -23,6 +23,7 @@ namespace CFS_1507.Controller.Endpoint
 
             pr.MapPost("/create", CreateProduct).RequireAuthorization(ERole.ADMIN.ToString()).DisableAntiforgery();
             pr.MapGet("/get-all", GetAllProduct);
+            pr.MapGet("/get-products", GetAllProductPage);
             pr.MapGet("/{product_id}", GetProductDetail);
             pr.MapPatch("/{product_id}", SoftDeleteProduct).RequireAuthorization(ERole.ADMIN.ToString());
             pr.MapPatch("/update/{product_id}", UpdateProduct).RequireAuthorization(ERole.ADMIN.ToString()).DisableAntiforgery();
@@ -63,6 +64,33 @@ namespace CFS_1507.Controller.Endpoint
                     sortByPrice = sortByPrice ?? false
                 };
                 var result = await mediator.Send(new GetAllProductQuery(queryHelper, lan));
+                return Results.Ok(new { success = 200, result });
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 400);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
+        }
+        public async Task<IResult> GetAllProductPage(
+            [FromQuery] int? pageNumber,
+            [FromQuery] int? pageSize,
+            [FromQuery] bool? sortByPrice,
+            [FromQuery] string? lan,
+            [FromServices] IMediator mediator)
+        {
+            try
+            {
+                var queryHelper = new QueryHelperDto
+                {
+                    pageNumber = pageNumber ?? 0,
+                    pageSize = pageSize ?? 0,
+                    sortByPrice = sortByPrice ?? false
+                };
+                var result = await mediator.Send(new GetAllProductPageQuery(lan));
                 return Results.Ok(new { success = 200, result });
             }
             catch (BadHttpRequestException ex)

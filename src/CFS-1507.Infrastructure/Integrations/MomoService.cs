@@ -89,14 +89,6 @@ namespace CFS_1507.Infrastructure.Integrations
             return momoResponse;
         }
 
-        private string ComputeHmacSha256(string data, string secretKey)
-        {
-            byte[] keyBytes = Encoding.UTF8.GetBytes(secretKey);
-            byte[] dataBytes = Encoding.UTF8.GetBytes(data);
-            using var hmac = new HMACSHA256(keyBytes);
-            byte[] hash = hmac.ComputeHash(dataBytes);
-            return BitConverter.ToString(hash).Replace("-", "").ToLower();
-        }
         private static String getSignature(String text, String key)
         {
             ASCIIEncoding encoding = new ASCIIEncoding();

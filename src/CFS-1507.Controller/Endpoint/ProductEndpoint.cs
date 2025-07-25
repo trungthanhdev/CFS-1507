@@ -22,8 +22,8 @@ namespace CFS_1507.Controller.Endpoint
                 .WithDisplayName("Product");
 
             pr.MapPost("/create", CreateProduct).RequireAuthorization(ERole.ADMIN.ToString()).DisableAntiforgery();
-            pr.MapGet("/get-all", GetAllProduct).RequireAuthorization();
-            pr.MapGet("/{product_id}", GetProductDetail).RequireAuthorization();
+            pr.MapGet("/get-all", GetAllProduct);
+            pr.MapGet("/{product_id}", GetProductDetail);
             pr.MapPatch("/{product_id}", SoftDeleteProduct).RequireAuthorization(ERole.ADMIN.ToString());
             pr.MapPatch("/update/{product_id}", UpdateProduct).RequireAuthorization(ERole.ADMIN.ToString()).DisableAntiforgery();
             return endpoints;
@@ -76,17 +76,22 @@ namespace CFS_1507.Controller.Endpoint
         }
 
         public async Task<IResult> GetProductDetail(
-            [FromRoute] string product_id,
+            [FromRoute] string? product_id,
+            [FromQuery] string? lan,
             [FromServices] IMediator mediator)
         {
             try
             {
-                var result = await mediator.Send(new GetProductDetailQuery(product_id));
+                var result = await mediator.Send(new GetProductDetailQuery(product_id, lan));
                 return Results.Ok(new { success = 200, data = result });
             }
             catch (NotFoundException ex)
             {
                 return Results.Problem(ex.Message, statusCode: 404);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 400);
             }
             catch (Exception ex)
             {

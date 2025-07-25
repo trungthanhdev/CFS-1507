@@ -27,7 +27,7 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
     //4: Call MomoService.CreatePaymentAsync.
     //5: Save DB via IUnitOfWork.
 
-    public class PayByMomoCommand(ReqChooseCartItemsDto arg) : IRequest<object>
+    public class PayByMomoCommand(ReqChooseCartItemsDto arg) : IRequest<string>
     {
         public ReqChooseCartItemsDto Arg = arg;
     }
@@ -36,9 +36,9 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
         AppDbContext dbContext,
         UserIdentifyService userIdentifyService,
         IUnitOfWork unitOfWork
-    ) : IRequestHandler<PayByMomoCommand, object>
+    ) : IRequestHandler<PayByMomoCommand, string>
     {
-        public async Task<object> Handle(PayByMomoCommand request, CancellationToken cancellationToken)
+        public async Task<string> Handle(PayByMomoCommand request, CancellationToken cancellationToken)
         {
             var dto = request.Arg;
             //1:

@@ -22,6 +22,7 @@ namespace CFS_1507.Contract.DTOs.ProductDto.Response
     {
         public string? category_name { get; set; }
         public List<ResProductItemDto>? listProductItems { get; set; }
+        public int total { get; set; }
     }
     public class ResProductItemDto
     {

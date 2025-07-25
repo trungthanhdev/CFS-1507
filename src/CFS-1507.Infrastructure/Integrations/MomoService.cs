@@ -21,7 +21,7 @@ namespace CFS_1507.Infrastructure.Integrations
             _httpClient = new HttpClient();
         }
 
-        public async Task<object> CreatePaymentAsync(OrderInfoModel model)
+        public async Task<string> CreatePaymentAsync(OrderInfoModel model)
         {
             var MomoApiUrl = _configuration["MomoAPI:MomoApiUrl"] ?? throw new NotFoundException("MomoApiUrl not found!");
             var PartnerCode = _configuration["MomoAPI:PartnerCode"] ?? throw new NotFoundException("PartnerCode not found!");
@@ -86,7 +86,8 @@ namespace CFS_1507.Infrastructure.Integrations
             if (momoResponse == null)
                 throw new NotFoundException("Cannot parse data from MoMo response!");
             // System.Console.WriteLine($"Momo response: msg: {momoResponse.message}, payUrl: {momoResponse.payUrl},qrcode: {momoResponse.qrCodeUrl}");
-            return momoResponse;
+            var payUrl = momoResponse.payUrl ?? "Can not get payUrl from Momo!";
+            return payUrl;
         }
 
         private static String getSignature(String text, String key)

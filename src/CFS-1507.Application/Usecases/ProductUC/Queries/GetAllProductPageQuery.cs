@@ -99,10 +99,12 @@ namespace CFS_1507.Application.Usecases.ProductUC.Queries
                         product_description = p.product_description
                     })
                     .ToList();
+                var total = products.Count();
                 response.Add(new ResProductPageDto
                 {
                     category_name = categoryName,
-                    listProductItems = products
+                    listProductItems = products,
+                    total = total
                 });
             }
             return response;

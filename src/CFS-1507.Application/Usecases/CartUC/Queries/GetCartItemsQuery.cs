@@ -41,7 +41,7 @@ namespace CFS_1507.Application.Usecases.CartUC.Queries
             var take = dto.pageSize;
 
             var allCartItemsQuery = dbContext.CartItemsEntities
-                .Where(x => x.cart_id == currentCart.cart_id)
+                .Where(x => x.cart_id == currentCart.cart_id && x.status != "COMPLETED")
                 .OrderBy(x => x.created_at);
             var total = await allCartItemsQuery.CountAsync();
             var allCartItems = await allCartItemsQuery

@@ -73,7 +73,7 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
                 amount += totalItemPrice;
             }
             //3.3:
-            System.Console.WriteLine($"temp_cart_id: {currentCart.temp_cart_id}");
+            // System.Console.WriteLine($"temp_cart_id: {currentCart.temp_cart_id}");
             var newOrderModel = new OrderInfoModel
             {
                 CartId = currentCart.temp_cart_id,

@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using CFS_1507.Application.Services.TokenService;
+using CFS_1507.Application.Utils;
 using CFS_1507.Contract.Helper;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,5 +13,6 @@ public static class ApplicationInjection
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddScoped<TokenService>();
         services.AddScoped<UserIdentifyService>();
+        services.AddScoped<GenerateQR>();
     }
 }

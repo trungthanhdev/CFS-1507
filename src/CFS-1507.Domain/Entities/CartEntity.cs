@@ -14,6 +14,7 @@ namespace CFS_1507.Domain.Entities
     {
         [Key]
         public string cart_id { get; set; } = null!;
+        public string temp_cart_id { get; set; } = null!;
         public bool is_Paid { get; set; }
         [ForeignKey(nameof(User))]
         public string user_id { get; set; } = null!;
@@ -26,6 +27,7 @@ namespace CFS_1507.Domain.Entities
         private CartEntity(string user_id)
         {
             this.cart_id = Guid.NewGuid().ToString();
+            this.temp_cart_id = this.cart_id;
             this.user_id = user_id;
             this.is_Paid = false;
             this.created_at = DateTimeOffset.UtcNow;
@@ -45,6 +47,11 @@ namespace CFS_1507.Domain.Entities
                 newCart.CartItemsEntities.Add(newCartItem);
             }
             return newCart;
+        }
+        public void UpdateTempCartId()
+        {
+            this.temp_cart_id = Guid.NewGuid().ToString();
+            this.updated_at = DateTimeOffset.UtcNow;
         }
         public void CartPaid()
         {
@@ -81,6 +88,10 @@ namespace CFS_1507.Domain.Entities
         public void ChangeStatusToCompleted(CartItemsEntity cartItem)
         {
             cartItem.ChangeStatusToCompleted();
+        }
+        public void ChangeStatusToPending(CartItemsEntity cartItem)
+        {
+            cartItem.ChangeStatusToPending();
         }
         public OrderEntity CreateOrder(string cart_id, string user_id)
         {

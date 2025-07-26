@@ -21,9 +21,9 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
     //4: Check how many cartItem "PENDING" in cart? if == 0 => updateCartStatus
     //5: Save to DB via unitOfWork.
 
-    public class OrderSuccessfullyCommand(string cart_id) : IRequest<OkResponse>
+    public class OrderSuccessfullyCommand(string temp_cart_id) : IRequest<OkResponse>
     {
-        public string Cart_id = cart_id;
+        public string Temp_cart_id = temp_cart_id;
     }
     public class OrderSuccessfullyCommandHandler(
         AppDbContext dbContext,
@@ -38,7 +38,7 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
             //1:
             var currentCart = await dbContext.CartEntities
                 .Include(x => x.CartItemsEntities)
-                .Where(x => x.cart_id == request.Cart_id)
+                .Where(x => x.temp_cart_id == request.Temp_cart_id)
                 .FirstOrDefaultAsync(cancellationToken);
             currentCart = cartCheck.CheckNullOrNot(currentCart, "Current cart");
             //2:

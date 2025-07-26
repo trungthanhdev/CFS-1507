@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CFS_1507.Application.Usecases.ProductUC.Commands;
 using CFS_1507.Application.Usecases.ProductUC.Queries;
+using CFS_1507.Application.Utils;
 using CFS_1507.Contract.DTOs.ProductDto.Request;
 using CFS_1507.Contract.Helper;
 using CFS_1507.Domain.Common;
@@ -27,6 +28,8 @@ namespace CFS_1507.Controller.Endpoint
             pr.MapGet("/{product_id}", GetProductDetail);
             pr.MapPatch("/{product_id}", SoftDeleteProduct).RequireAuthorization(ERole.ADMIN.ToString());
             pr.MapPatch("/update/{product_id}", UpdateProduct).RequireAuthorization(ERole.ADMIN.ToString()).DisableAntiforgery();
+            pr.MapGet("/test-gen", TestGenQR);
+
             return endpoints;
         }
         public async Task<IResult> CreateProduct(
@@ -96,6 +99,20 @@ namespace CFS_1507.Controller.Endpoint
             catch (BadHttpRequestException ex)
             {
                 return Results.Problem(ex.Message, statusCode: 400);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
+        }
+        public IResult TestGenQR(
+                [FromServices] GenerateQR generateQR)
+        {
+            try
+            {
+                var response = "Test gen";
+                var result = generateQR.GenerateQRCode(response);
+                return Results.Ok(new { success = 200, result });
             }
             catch (Exception ex)
             {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CFS_1507.Application.Usecases.CartUC.Commands;
 using CFS_1507.Application.Usecases.MomoUC.Commands;
 using CFS_1507.Application.Usecases.OrderUC.Commands;
 using CFS_1507.Contract.DTOs.CartDto.Request;
@@ -58,26 +59,26 @@ namespace CFS_1507.Controller.Endpoint
                     //1: parse cart_id from Guid(N) => normal Guid
                     if (string.IsNullOrWhiteSpace(arg.OrderId))
                         throw new BadHttpRequestException("Invalid cart_id format.");
-                    var cart_id = Guid.ParseExact(arg.OrderId, "N").ToString("D");
+                    var temp_cart_id = Guid.ParseExact(arg.OrderId, "N").ToString("D");
                     //2: if success => call ordersuccessfullycommand
                     if (arg.ResultCode == 0)
                     {
-                        var result = await mediator.Send(new OrderSuccessfullyCommand(cart_id));
+                        var result = await mediator.Send(new OrderSuccessfullyCommand(temp_cart_id));
                         return Results.Ok(new { success = true, msg = result });
                     }
                     if (arg.ResultCode == 1006)
                     {
-                        var result = await mediator.Send(new OrderSuccessfullyCommand(cart_id));// dung de test chuc nang thanh toan thanh cong
+                        var result = await mediator.Send(new RejectMomoPaymentCommand(temp_cart_id));
                         System.Console.WriteLine($"statuscode: {arg.ResultCode}, msg: {arg.Message}");
                         return Results.Ok(new { success = true, msg = "User canceled!" });
                     }
 
                     return Results.Problem("Unsuccessfully!");
                 }
-                catch (System.Exception)
+                catch (System.Exception ex)
                 {
                     System.Console.WriteLine("Can not parse orderId from momo handle ipn");
-                    throw;
+                    return Results.Problem(ex.Message, statusCode: 500);
                 }
             }
             catch (BadHttpRequestException ex)

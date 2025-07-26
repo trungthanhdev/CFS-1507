@@ -61,6 +61,11 @@ namespace CFS_1507.Domain.Entities
             this.status = "COMPLETED";
             this.updated_at = DateTimeOffset.UtcNow;
         }
+        public void ChangeStatusToPending()
+        {
+            this.status = "PENDING";
+            this.updated_at = DateTimeOffset.UtcNow;
+        }
         public static CartItemsEntity CreateCartItem(string cart_id, int itemQuantiy, string product_id, double product_price, ProductEntity product)
         {
             product.UpdateIsInCart(itemQuantiy);

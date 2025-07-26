@@ -39,7 +39,6 @@ namespace CFS_1507.Application.Usecases.CartUC.Commands
                 .Where(x => x.user_id == user_id && x.is_Paid == false)
                 .FirstOrDefaultAsync(cancellationToken);
             currentCart = cartCheck.CheckNullOrNot(currentCart, "Current cart");
-
             if (request.Arg.listCartItems == null || !request.Arg.listCartItems.Any())
                 throw new BadHttpRequestException("List product_id is null or empty!");
             var productIds = request.Arg.listCartItems

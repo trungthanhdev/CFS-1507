@@ -21,9 +21,11 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
     //Step:
     //1:  Get list of cart_items from client and Validate (in dto).
     //2: Authenticate user.
+    //2.1: create temp_cart_id => save to db (CartEntity)
     //3: Loop through each cart item:
     //3.1: Mark status as IN_PROCESS.
     //3.2: Calculate total amount.
+    //3.3: create momoPayload =>  temp_cart_id(orderID), amount(amount), orderInfo(request.Arg.OrderInfo) 
     //4: Call MomoService.CreatePaymentAsync.
     //5: Save DB via IUnitOfWork.
 
@@ -55,6 +57,8 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
                 .FirstOrDefaultAsync(cancellationToken);
             if (currentCart is null)
                 throw new NotFoundException("Current cart not found!");
+            //2.1:
+            currentCart.UpdateTempCartId();
             //3:
             foreach (var item in dto.listCartItems)
             {
@@ -67,15 +71,12 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
                 //3.2:
                 var totalItemPrice = cartItem.product_price * item.quantity;
                 amount += totalItemPrice;
-                // System.Console.WriteLine($"in totalItemPrice: {totalItemPrice}");
-                // System.Console.WriteLine($"in foreach quantity: {item.quantity}");
-                // System.Console.WriteLine($"in foreach price: {cartItem.product_price}");
-                // System.Console.WriteLine($"in foreach amount: {amount}");
             }
-            System.Console.WriteLine($"amount: {amount}");
+            //3.3:
+            System.Console.WriteLine($"temp_cart_id: {currentCart.temp_cart_id}");
             var newOrderModel = new OrderInfoModel
             {
-                CartId = dto.CartId,
+                CartId = currentCart.temp_cart_id,
                 Amount = amount,
                 OrderInfo = dto.OrderInfo
             };

@@ -21,6 +21,8 @@ namespace CFS_1507.Domain.Entities
         public UserEntity? User { get; set; }
         public DateTimeOffset? created_at { get; set; }
         public DateTimeOffset? updated_at { get; set; }
+        public DateTimeOffset? locked_at { get; set; }
+        public bool is_locked { get; set; }
         public virtual List<OrderEntity>? Order { get; set; } = [];
         public virtual List<CartItemsEntity> CartItemsEntities { get; set; } = [];
         private CartEntity() { }
@@ -30,6 +32,7 @@ namespace CFS_1507.Domain.Entities
             this.temp_cart_id = this.cart_id;
             this.user_id = user_id;
             this.is_Paid = false;
+            this.is_locked = false;
             this.created_at = DateTimeOffset.UtcNow;
             this.updated_at = DateTimeOffset.UtcNow;
         }
@@ -52,6 +55,18 @@ namespace CFS_1507.Domain.Entities
         {
             this.temp_cart_id = Guid.NewGuid().ToString();
             this.updated_at = DateTimeOffset.UtcNow;
+        }
+        public void LockCart()
+        {
+            this.is_locked = true;
+            this.updated_at = DateTimeOffset.UtcNow;
+            this.locked_at = DateTimeOffset.UtcNow;
+        }
+        public void UnLockCart()
+        {
+            this.is_locked = false;
+            this.updated_at = DateTimeOffset.UtcNow;
+            this.locked_at = null;
         }
         public void CartPaid()
         {

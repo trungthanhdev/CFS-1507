@@ -26,7 +26,7 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
     //3.1: Mark status as IN_PROCESS.
     //3.2: Calculate total amount.
     //3.3: create momoPayload =>  temp_cart_id(orderID), amount(amount), orderInfo(request.Arg.OrderInfo) 
-    //4: Call MomoService.CreatePaymentAsync.
+    //4: Lock cart and Call MomoService.CreatePaymentAsync.
     //5: Save DB via IUnitOfWork.
 
     public class PayByMomoCommand(ReqChooseCartItemsDto arg) : IRequest<string>
@@ -43,6 +43,7 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
         public async Task<string> Handle(PayByMomoCommand request, CancellationToken cancellationToken)
         {
             var dto = request.Arg;
+            var now = DateTimeOffset.UtcNow;
             //1:
             if (dto.listCartItems is null || !dto.listCartItems.Any())
                 throw new BadHttpRequestException("List cart items is null or empty!");
@@ -57,6 +58,19 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
                 .FirstOrDefaultAsync(cancellationToken);
             if (currentCart is null)
                 throw new NotFoundException("Current cart not found!");
+            if (currentCart.is_locked == true && currentCart.locked_at.HasValue && now - currentCart.locked_at < TimeSpan.FromMinutes(10))
+            {
+                var timePassed = now - currentCart.locked_at.Value;
+                var timeRemaining = TimeSpan.FromMinutes(10) - timePassed;
+                var minutes = timeRemaining.Minutes;
+                var seconds = timeRemaining.Seconds;
+
+                throw new BadHttpRequestException($"Cart is in process, try again after {minutes} minutes {seconds} seconds!");
+            }
+            else
+            {
+                currentCart.UnLockCart();
+            }
             //2.1:
             currentCart.UpdateTempCartId();
             //3:
@@ -81,10 +95,13 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
                 OrderInfo = dto.OrderInfo
             };
             //4:
+            currentCart.LockCart();
             var createMomoMethod = await momoService.CreatePaymentAsync(newOrderModel);
             if (createMomoMethod is null)
+            {
+                currentCart.UnLockCart();
                 throw new InvalidOperationException("Can not handle data from momo!");
-
+            }
             if (await unitOfWork.SaveChangeAsync(cancellationToken) > 0)
             {
                 return createMomoMethod;

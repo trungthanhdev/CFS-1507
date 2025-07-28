@@ -35,6 +35,7 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
             {
                 currentCart.ChangeStatusToPending(item);
             }
+            currentCart.UnLockCart();
             if (await unitOfWork.SaveChangeAsync(cancellationToken) > 0)
             {
                 return new OkResponse("User reject purchase successfully!");

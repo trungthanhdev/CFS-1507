@@ -80,6 +80,7 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
             //5:
             if (await unitOfWork.SaveChangeAsync(cancellationToken) > 0)
             {
+                currentCart.UnLockCart();
                 return new OkResponse("Order successfully!");
             }
             throw new InvalidOperationException("Fail to save, nothing changes!");

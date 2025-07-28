@@ -129,6 +129,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
 app.UseAuthentication();
 // ----- Middleware ----
 app.UseMiddleware<TokenRevalidator>();

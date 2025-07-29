@@ -21,7 +21,7 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
     //4: Check how many cartItem "PENDING" in cart? if == 0 => updateCartStatus
     //5: Save to DB via unitOfWork.
 
-    public class OrderSuccessfullyCommand(string temp_cart_id) : IRequest<OkResponse>
+    public class OrderSuccessfullyCommand(string temp_cart_id) : IRequest<PurchaseMomoResponse>
     {
         public string Temp_cart_id = temp_cart_id;
     }
@@ -31,9 +31,9 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
         IRepositoryDefinition<OrderEntity> orderRepo,
         IRepositoryDefinition<OrderItemsEntity> orderItemsRepo,
         ICheckInstanceOfTEntityClass<CartEntity> cartCheck
-    ) : IRequestHandler<OrderSuccessfullyCommand, OkResponse>
+    ) : IRequestHandler<OrderSuccessfullyCommand, PurchaseMomoResponse>
     {
-        public async Task<OkResponse> Handle(OrderSuccessfullyCommand request, CancellationToken cancellationToken)
+        public async Task<PurchaseMomoResponse> Handle(OrderSuccessfullyCommand request, CancellationToken cancellationToken)
         {
             //1:
             var currentCart = await dbContext.CartEntities
@@ -78,12 +78,22 @@ namespace CFS_1507.Application.Usecases.OrderUC.Commands
                 currentCart.CartPaid();
             }
             //5:
+            var response = new PurchaseMomoResponse
+            {
+                msg = "Order successfully!",
+                user_cart_id = currentCart.cart_id
+            };
             if (await unitOfWork.SaveChangeAsync(cancellationToken) > 0)
             {
                 currentCart.UnLockCart();
-                return new OkResponse("Order successfully!");
+                return response;
             }
             throw new InvalidOperationException("Fail to save, nothing changes!");
         }
+    }
+    public class PurchaseMomoResponse
+    {
+        public string msg { get; set; } = null!;
+        public string user_cart_id { get; set; } = null!;
     }
 }

@@ -13,14 +13,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CFS_1507.Application.Usecases.MomoUC.Commands
 {
-    public record RejectMomoPaymentCommand(string temp_cart_id) : IRequest<OkResponse> { }
+    public record RejectMomoPaymentCommand(string temp_cart_id) : IRequest<RejectMomoResponse> { }
     public class RejectMomoPaymentCommandHandler(
         ICheckInstanceOfTEntityClass<CartEntity> cartCheck,
         IUnitOfWork unitOfWork,
         AppDbContext dbContext
-    ) : IRequestHandler<RejectMomoPaymentCommand, OkResponse>
+    ) : IRequestHandler<RejectMomoPaymentCommand, RejectMomoResponse>
     {
-        public async Task<OkResponse> Handle(RejectMomoPaymentCommand request, CancellationToken cancellationToken)
+        public async Task<RejectMomoResponse> Handle(RejectMomoPaymentCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(request.temp_cart_id))
                 throw new BadHttpRequestException("Can not find temp_cart_id");
@@ -36,12 +36,22 @@ namespace CFS_1507.Application.Usecases.MomoUC.Commands
                 currentCart.ChangeStatusToPending(item);
             }
             currentCart.UnLockCart();
+            var response = new RejectMomoResponse
+            {
+                msg = "User reject purchase successfully!",
+                user_cart_id = currentCart.cart_id
+            };
             if (await unitOfWork.SaveChangeAsync(cancellationToken) > 0)
             {
-                return new OkResponse("User reject purchase successfully!");
+                return response;
             }
             await unitOfWork.RollbackAsync(cancellationToken);
             throw new InvalidOperationException("Fail to save, nothing changes!");
         }
+    }
+    public class RejectMomoResponse
+    {
+        public string msg { get; set; } = null!;
+        public string user_cart_id { get; set; } = null!;
     }
 }

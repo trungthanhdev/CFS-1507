@@ -7,10 +7,13 @@ using CFS_1507.Application.Usecases.MomoUC.Commands;
 using CFS_1507.Application.Usecases.OrderUC.Commands;
 using CFS_1507.Contract.DTOs.CartDto.Request;
 using CFS_1507.Contract.DTOs.MomoDto.Request;
+using CFS_1507.Infrastructure.Hubs;
 using CFS_1507.Infrastructure.Integrations;
+using CFS_1507.Infrastructure.Interfaces;
 using CTCore.DynamicQuery.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CFS_1507.Controller.Endpoint
 {
@@ -50,13 +53,14 @@ namespace CFS_1507.Controller.Endpoint
         }
         public async Task<IResult> HandleIPN(
            [FromBody] MomoIPNDto arg,
+           [FromServices] IHubContext<MomoHub> momoHub,
            [FromServices] IMediator mediator)
         {
             try
             {
                 try
                 {
-                    //1: parse cart_id from Guid(N) => normal Guid
+                    //1: parse cart_id from Guid(N) => normal Guid("D)
                     if (string.IsNullOrWhiteSpace(arg.OrderId))
                         throw new BadHttpRequestException("Invalid cart_id format.");
                     var temp_cart_id = Guid.ParseExact(arg.OrderId, "N").ToString("D");
@@ -64,20 +68,24 @@ namespace CFS_1507.Controller.Endpoint
                     if (arg.ResultCode == 0)
                     {
                         var result = await mediator.Send(new OrderSuccessfullyCommand(temp_cart_id));
-                        return Results.Ok(new { success = true, msg = result });
+                        // await momoHub.NotifyPurchaseSuccessfully(data.user_cart_id, "Success");
+                        await momoHub.Clients.Group(result.user_cart_id).SendAsync("PurchaseSuccessfully", result.user_cart_id, "Success");
+                        return Results.Ok(new { success = true, msg = result.msg });
                     }
                     if (arg.ResultCode == 1006)
                     {
                         var result = await mediator.Send(new RejectMomoPaymentCommand(temp_cart_id));
                         System.Console.WriteLine($"statuscode: {arg.ResultCode}, msg: {arg.Message}");
-                        return Results.Ok(new { success = true, msg = "User canceled!" });
+                        // await momoHub.NotifyPurchaseSuccessfully(data.user_cart_id, "Cancelled");
+                        await momoHub.Clients.Group(result.user_cart_id).SendAsync("UserCancelOrder", result.user_cart_id, "UserCancelOrder");
+                        return Results.Ok(new { success = true, msg = result.msg });
                     }
 
                     return Results.Problem("Unsuccessfully!");
                 }
                 catch (System.Exception ex)
                 {
-                    System.Console.WriteLine("Can not parse orderId from momo handle ipn");
+                    System.Console.WriteLine($"Can not parse orderId from momo handle ipn or {ex.Message}");
                     return Results.Problem(ex.Message, statusCode: 500);
                 }
             }

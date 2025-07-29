@@ -14,6 +14,7 @@ using CFS_1507.Controller.Endpoint;
 using Microsoft.Extensions.FileProviders;
 using CFS_1507.Domain.Common;
 using System.Security.Claims;
+using CFS_1507.Infrastructure.Hubs;
 
 DotNetEnv.Env.Load();
 
@@ -71,6 +72,7 @@ builder.Logging.AddDebug();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 // ------ map endpoints -------
@@ -135,5 +137,6 @@ app.UseAuthentication();
 app.UseMiddleware<TokenRevalidator>();
 // ---------------------
 app.UseAuthorization();
+app.MapHub<MomoHub>("/momo-result");
 app.Run();
 

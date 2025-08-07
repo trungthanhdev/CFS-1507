@@ -29,6 +29,7 @@ namespace CFS_1507.Controller.Endpoint
             pr.MapPatch("/{product_id}", SoftDeleteProduct).RequireAuthorization(ERole.ADMIN.ToString());
             pr.MapPatch("/update/{product_id}", UpdateProduct).RequireAuthorization(ERole.ADMIN.ToString()).DisableAntiforgery();
             pr.MapGet("/test-gen", TestGenQR);
+            pr.MapGet("/search", SearchProduct);
 
             return endpoints;
         }
@@ -128,6 +129,29 @@ namespace CFS_1507.Controller.Endpoint
             try
             {
                 var result = await mediator.Send(new GetProductDetailQuery(product_id, lan));
+                return Results.Ok(new { success = 200, data = result });
+            }
+            catch (NotFoundException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 404);
+            }
+            catch (BadHttpRequestException ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 400);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
+        }
+        public async Task<IResult> SearchProduct(
+            [FromQuery] string? product_name,
+            [FromQuery] string? lan,
+            [FromServices] IMediator mediator)
+        {
+            try
+            {
+                var result = await mediator.Send(new SearchProductQuery(lan, product_name));
                 return Results.Ok(new { success = 200, data = result });
             }
             catch (NotFoundException ex)

@@ -5,9 +5,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using CFS_1507.Domain.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace CFS_1507.Domain.Entities
 {
+    [Index(nameof(normalizedName))]
     public class TranslateEntity : TEntityClass
     {
         [Key]
@@ -16,6 +18,7 @@ namespace CFS_1507.Domain.Entities
         public string product_id { get; set; } = null!;
         public ProductEntity? Product { get; set; }
         public string? translate_name { get; set; }
+        public string? normalizedName { get; set; }
         public string? translate_description { get; set; }
         public double? translate_price { get; set; }
         public bool is_deleted { get; private set; } = false;
@@ -28,6 +31,7 @@ namespace CFS_1507.Domain.Entities
             this.translate_id = Guid.NewGuid().ToString();
             this.product_id = product_id;
             this.translate_name = translate_name;
+            this.normalizedName = translate_name?.ToUpper();
             this.translate_price = translate_price;
             this.translate_description = translate_description;
             this.translate_image = translate_image;
@@ -41,6 +45,7 @@ namespace CFS_1507.Domain.Entities
         public void Update(string? translate_name, double? translate_price, string? translate_description, string? translate_image)
         {
             this.translate_name = translate_name ?? this.translate_name;
+            this.normalizedName = translate_name?.ToUpper() ?? this.normalizedName;
             this.translate_price = translate_price ?? this.translate_price;
             this.translate_description = translate_description ?? this.translate_description;
             this.translate_image = translate_image ?? this.translate_image;

@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using CFS_1507.Domain.Common;
 using CFS_1507.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CFS_1507.Domain.Entities
 {
+    [Index(nameof(normalizedName))]
     public class ProductEntity : TEntityClass, IAggregrationRoot
     {
         [Key]
@@ -17,6 +19,7 @@ namespace CFS_1507.Domain.Entities
         public double? product_price { get; set; }
         public bool is_deleted { get; private set; } = false;
         public string? product_image { get; set; }
+        public string? normalizedName { get; set; }
         public int is_in_stock { get; set; }
         public int is_bought { get; set; }
         public int is_in_cart { get; set; }
@@ -33,6 +36,7 @@ namespace CFS_1507.Domain.Entities
             this.product_price = product_price;
             this.product_description = product_description;
             this.product_image = product_image;
+            this.normalizedName = product_name.ToUpper();
             this.is_in_stock = is_in_stock;
             this.created_at = DateTimeOffset.UtcNow;
             this.updated_at = DateTimeOffset.UtcNow;
@@ -56,6 +60,7 @@ namespace CFS_1507.Domain.Entities
         public void Update(string? product_name, string? product_image, string? product_description, double? product_price, int? is_in_stock)
         {
             this.product_name = product_name ?? this.product_name;
+            this.normalizedName = product_name?.ToUpper() ?? this.normalizedName;
             this.product_image = product_image ?? this.product_image;
             this.product_price = product_price ?? this.product_price;
             this.product_description = product_description ?? this.product_description;

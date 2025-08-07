@@ -3,6 +3,7 @@ using System;
 using CFS_1507.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CFS_1507.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250807083005_InitIndex02")]
+    partial class InitIndex02
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -332,7 +335,7 @@ namespace CFS_1507.Infrastructure.Migrations
 
                     b.HasKey("product_id");
 
-                    b.HasIndex("normalizedName");
+                    b.HasIndex("product_name");
 
                     b.ToTable("ProductEntities");
                 });
@@ -398,9 +401,9 @@ namespace CFS_1507.Infrastructure.Migrations
 
                     b.HasKey("translate_id");
 
-                    b.HasIndex("normalizedName");
-
                     b.HasIndex("product_id");
+
+                    b.HasIndex("translate_name");
 
                     b.ToTable("TranslateEntities");
                 });

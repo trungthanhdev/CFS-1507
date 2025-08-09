@@ -79,6 +79,7 @@ namespace CFS_1507.Domain.Entities
 
             if (existingItem != null)
             {
+                existingItem.Product?.CheckQuantity(cartItems.quantity);
                 existingItem.UpdateCartItemQuantity(cartItems.quantity);
                 return existingItem;
             }

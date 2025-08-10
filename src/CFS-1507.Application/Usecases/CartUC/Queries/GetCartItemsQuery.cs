@@ -50,6 +50,7 @@ namespace CFS_1507.Application.Usecases.CartUC.Queries
                 .Take(take)
                 .Select(x => new ResCartItemsDto
                 {
+                    product_id = x.product_id,
                     cart_item_id = x.cart_item_id,
                     quantity = x.quantity,
                     product_name = x.Product!.product_name

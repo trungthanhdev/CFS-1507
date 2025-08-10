@@ -7,6 +7,7 @@ namespace CFS_1507.Contract.DTOs.CartDto.Reponse
 {
     public class ResCartItemsDto
     {
+        public string product_id { get; set; } = null!;
         public string? cart_item_id { get; set; }
         public int quantity { get; set; }
         public string? product_name { get; set; }

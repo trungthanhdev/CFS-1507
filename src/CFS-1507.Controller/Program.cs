@@ -23,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.WebHost.UseUrls("http://0.0.0.0:5555");
 // ------- DI --------
-builder.Services.AddInjection(builder.Configuration);
+await builder.Services.AddInjection(builder.Configuration);
 builder.Services.AddAuthorization(options =>
 {
 

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using CFS_1507.Application;
 using CFS_1507.Controller.Endpoint;
 using CFS_1507.Controller.Middlewares;
@@ -20,10 +21,10 @@ public static class Injection
                     .AllowCredentials();
             }));
     }
-    public static void AddInjection(this IServiceCollection services, IConfiguration configuration)
+    public static async Task AddInjection(this IServiceCollection services, IConfiguration configuration)
     {
         services.InjectApplication();
-        services.AddInfrastructure(configuration);
+        await services.AddInfrastructure(configuration);
         services.AddScoped<TokenRevalidator>();
         services.AddCorsConfig();
     }

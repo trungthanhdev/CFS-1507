@@ -2,6 +2,7 @@
 using CFS_1507.Application.Services.TokenService;
 using CFS_1507.Application.Utils;
 using CFS_1507.Contract.Helper;
+using CFS_1507.Infrastructure.Integrations.RabbitMQ;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CFS_1507.Application;
@@ -14,5 +15,6 @@ public static class ApplicationInjection
         services.AddScoped<TokenService>();
         services.AddScoped<UserIdentifyService>();
         services.AddScoped<GenerateQR>();
+        services.AddHostedService<RabbitMQConsumer>();
     }
 }

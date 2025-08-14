@@ -7,6 +7,7 @@ using CFS_1507.Application.Usecases.MomoUC.Commands;
 using CFS_1507.Application.Usecases.OrderUC.Commands;
 using CFS_1507.Contract.DTOs.CartDto.Request;
 using CFS_1507.Contract.DTOs.MomoDto.Request;
+using CFS_1507.Domain.Interfaces;
 using CFS_1507.Infrastructure.Hubs;
 using CFS_1507.Infrastructure.Integrations;
 using CFS_1507.Infrastructure.Interfaces;
@@ -53,6 +54,7 @@ namespace CFS_1507.Controller.Endpoint
         }
         public async Task<IResult> HandleIPN(
            [FromBody] MomoIPNDto arg,
+           [FromServices] IRabbitMQPublisher publisher,
            [FromServices] IHubContext<MomoHub> momoHub,
            [FromServices] IMediator mediator)
         {
@@ -67,18 +69,23 @@ namespace CFS_1507.Controller.Endpoint
                     //2: if success => call ordersuccessfullycommand
                     if (arg.ResultCode == 0)
                     {
-                        var result = await mediator.Send(new OrderSuccessfullyCommand(temp_cart_id));
+                        // var result = await mediator.Send(new OrderSuccessfullyCommand(temp_cart_id));
+                        await publisher.Handle(temp_cart_id);
                         // await momoHub.NotifyPurchaseSuccessfully(data.user_cart_id, "Success");
-                        await momoHub.Clients.Group(result.user_cart_id).SendAsync("PurchaseSuccessfully", result.user_cart_id, "Success");
-                        return Results.Ok(new { success = true, msg = result.msg });
+                        // await momoHub.Clients.Group(result.user_cart_id).SendAsync("PurchaseSuccessfully", result.user_cart_id, "Success");
+                        return Results.Ok(new { success = true, arg.Message });
                     }
                     if (arg.ResultCode == 1006)
                     {
-                        var result = await mediator.Send(new RejectMomoPaymentCommand(temp_cart_id));
-                        System.Console.WriteLine($"statuscode: {arg.ResultCode}, msg: {arg.Message}");
-                        // await momoHub.NotifyPurchaseSuccessfully(data.user_cart_id, "Cancelled");
-                        await momoHub.Clients.Group(result.user_cart_id).SendAsync("UserCancelOrder", result.user_cart_id, "UserCancelOrder");
-                        return Results.Ok(new { success = true, msg = result.msg });
+                        await publisher.Handle(temp_cart_id);
+                        return Results.Ok(new { success = true, arg.Message });
+
+                        // // await momoHub.NotifyPurchaseSuccessfully(data.user_cart_id, "Cancelled");
+
+                        // var result = await mediator.Send(new RejectMomoPaymentCommand(temp_cart_id));
+                        // System.Console.WriteLine($"statuscode: {arg.ResultCode}, msg: {arg.Message}");
+                        // await momoHub.Clients.Group(result.user_cart_id).SendAsync("UserCancelOrder", result.user_cart_id, "UserCancelOrder");
+                        // return Results.Ok(new { success = true, msg = result.msg });
                     }
 
                     return Results.Problem("Unsuccessfully!");

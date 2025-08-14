@@ -1,8 +1,10 @@
-﻿using CFS_1507.Domain.Common;
+﻿using System.Threading.Tasks;
+using CFS_1507.Domain.Common;
 using CFS_1507.Domain.Interfaces;
 using CFS_1507.Infrastructure.Helper;
 using CFS_1507.Infrastructure.Hubs;
 using CFS_1507.Infrastructure.Integrations;
+using CFS_1507.Infrastructure.Integrations.RabbitMQ;
 using CFS_1507.Infrastructure.Interfaces;
 using CFS_1507.Infrastructure.Persistence;
 using CFS_1507.Infrastructure.Persistence.Repositories;
@@ -10,12 +12,13 @@ using CTCore.DynamicQuery.Core.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
 
 namespace CFS_1507.Infrastructure;
 
 public static class InfrastructureInjection
 {
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static async Task AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         DotNetEnv.Env.Load();
         var opts = new DbContextOptionsBuilder();
@@ -32,5 +35,28 @@ public static class InfrastructureInjection
         services.AddScoped<MomoService>();
         services.AddScoped(typeof(ICheckInstanceOfTEntityClass<>), typeof(CheckInstanceOfTEntityClass<>));
         // services.AddScoped<IMomoHub, MomoHub>();
+
+        //RabbitMQ
+        var hostName = Environment.GetEnvironmentVariable("HOST_NAME_RBMQ") ?? throw new InvalidOperationException("HOST_NAME_RBMQ not found!");
+        var port = Environment.GetEnvironmentVariable("PORT_RBMQ") ?? throw new InvalidOperationException("PORT_RBMQ not found!");
+        if (!int.TryParse(port, out var portNumber))
+        {
+            throw new InvalidOperationException("Can not parse port RabbitMQ!");
+        }
+        var userName = Environment.GetEnvironmentVariable("USER_NAME_RBMQ") ?? throw new InvalidOperationException("USER_NAME_RBMQ not found!");
+        var passWord = Environment.GetEnvironmentVariable("PASS_RBMQ") ?? throw new InvalidOperationException("PASS_RBMQ not found!");
+        var factory = new ConnectionFactory()
+        {
+            HostName = hostName,
+            Port = portNumber,
+            UserName = userName,
+            Password = passWord,
+            VirtualHost = "/",
+            AutomaticRecoveryEnabled = true,
+            TopologyRecoveryEnabled = true,
+        };
+        var connection = await factory.CreateConnectionAsync();
+        services.AddSingleton<IConnection>(connection);
+        services.AddScoped<IRabbitMQPublisher, RabbitMQPublish>();
     }
 }

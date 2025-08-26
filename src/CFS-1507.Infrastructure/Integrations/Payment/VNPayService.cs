@@ -28,6 +28,7 @@ namespace CFS_1507.Infrastructure.Integrations.Payment
             _logger.LogInformation($"vnp_ReturnUrl: {_configuration["Vnpay:VNPReturnUrl"]}");
             string vnp_ReturnUrl = _configuration["Vnpay:VNPReturnUrl"] ?? throw new NotFoundException("VNPReturnUrl not found!");
             string vnp_Url = _configuration["Vnpay:BaseUrl"] ?? throw new NotFoundException("vnp_Url not found!");
+            string vnp_IPN = _configuration["Vnpay:IpnUrl"] ?? throw new NotFoundException("IpnUrl not found!");
             string vnp_TmnCode = _configuration["Vnpay:TmnCode"] ?? throw new NotFoundException("vnp_TmnCode not found!");
             string vnp_HashSecret = _configuration["Vnpay:HashSecret"] ?? throw new NotFoundException("vnp_HashSecret not found!");
             string vnp_Command = _configuration["Vnpay:Command"] ?? throw new NotFoundException("Command not found!");
@@ -39,6 +40,7 @@ namespace CFS_1507.Infrastructure.Integrations.Payment
             if (string.IsNullOrWhiteSpace(vnp_ReturnUrl)) throw new NotFoundException("VNPReturnUrl missing/empty");
             if (string.IsNullOrWhiteSpace(vnp_Url)) throw new NotFoundException("BaseUrl missing/empty");
             if (string.IsNullOrWhiteSpace(vnp_TmnCode)) throw new NotFoundException("TmnCode missing/empty");
+            if (string.IsNullOrWhiteSpace(vnp_IPN)) throw new NotFoundException("vnp_IPN missing/empty");
             if (string.IsNullOrWhiteSpace(vnp_HashSecret)) throw new NotFoundException("HashSecret missing/empty");
             if (model is null) throw new ArgumentNullException(nameof(model));
             if (string.IsNullOrWhiteSpace(model.OrderId)) throw new BadHttpRequestException("OrderId is required");
@@ -62,7 +64,7 @@ namespace CFS_1507.Infrastructure.Integrations.Payment
             _vnPayLib.AddRequestData("vnp_CreateDate", createdVN.ToString("yyyyMMddHHmmss"));
             _vnPayLib.AddRequestData("vnp_ExpireDate", expireVN.ToString("yyyyMMddHHmmss"));
             _vnPayLib.AddRequestData("vnp_IpAddr", ip);
-
+            _vnPayLib.AddRequestData("vnp_IpnUrl", vnp_IPN);
             _vnPayLib.AddRequestData("vnp_OrderInfo", "Thanh toan don hang:" + model.OrderId);
             _vnPayLib.AddRequestData("vnp_OrderType", "other");
             _vnPayLib.AddRequestData("vnp_ReturnUrl", vnp_ReturnUrl);

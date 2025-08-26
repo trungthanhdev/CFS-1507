@@ -69,23 +69,25 @@ namespace CFS_1507.Controller.Endpoint
                     //2: if success => call ordersuccessfullycommand
                     if (arg.ResultCode == 0)
                     {
-                        // var result = await mediator.Send(new OrderSuccessfullyCommand(temp_cart_id));
                         await publisher.Handle(temp_cart_id);
+                        return Results.Ok(new { success = true, arg.Message });
+
+                        // var result = await mediator.Send(new OrderSuccessfullyCommand(temp_cart_id));
                         // await momoHub.NotifyPurchaseSuccessfully(data.user_cart_id, "Success");
                         // await momoHub.Clients.Group(result.user_cart_id).SendAsync("PurchaseSuccessfully", result.user_cart_id, "Success");
-                        return Results.Ok(new { success = true, arg.Message });
                     }
                     if (arg.ResultCode == 1006)
                     {
-                        await publisher.Handle(temp_cart_id);
-                        return Results.Ok(new { success = true, arg.Message });
+                        //test thanh toan thanh cong
+                        // await publisher.Handle(temp_cart_id);
+                        // return Results.Ok(new { success = true, arg.Message });
 
-                        // // await momoHub.NotifyPurchaseSuccessfully(data.user_cart_id, "Cancelled");
+                        // await momoHub.NotifyPurchaseSuccessfully(data.user_cart_id, "Cancelled");
 
-                        // var result = await mediator.Send(new RejectMomoPaymentCommand(temp_cart_id));
-                        // System.Console.WriteLine($"statuscode: {arg.ResultCode}, msg: {arg.Message}");
-                        // await momoHub.Clients.Group(result.user_cart_id).SendAsync("UserCancelOrder", result.user_cart_id, "UserCancelOrder");
-                        // return Results.Ok(new { success = true, msg = result.msg });
+                        var result = await mediator.Send(new RejectMomoPaymentCommand(temp_cart_id));
+                        System.Console.WriteLine($"statuscode: {arg.ResultCode}, msg: {arg.Message}");
+                        await momoHub.Clients.Group(result.user_cart_id).SendAsync("UserCancelOrder", result.user_cart_id, "UserCancelOrder");
+                        return Results.Ok(new { success = true, msg = result.msg });
                     }
 
                     return Results.Problem("Unsuccessfully!");

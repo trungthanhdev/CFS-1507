@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using CFS_1507.Contract.DTOs.VNPayDto.Request;
 using Microsoft.AspNetCore.Http;
 
 namespace CFS_1507.Infrastructure.Helper
@@ -111,7 +112,6 @@ namespace CFS_1507.Infrastructure.Helper
             }
             return data.ToString();
         }
-
         #endregion
     }
 

@@ -4,6 +4,7 @@ using CFS_1507.Domain.Interfaces;
 using CFS_1507.Infrastructure.Helper;
 using CFS_1507.Infrastructure.Hubs;
 using CFS_1507.Infrastructure.Integrations;
+using CFS_1507.Infrastructure.Integrations.Payment;
 using CFS_1507.Infrastructure.Integrations.RabbitMQ;
 using CFS_1507.Infrastructure.Interfaces;
 using CFS_1507.Infrastructure.Persistence;
@@ -29,10 +30,13 @@ public static class InfrastructureInjection
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connectionString));
 
+        services.AddHttpContextAccessor();
         services.AddScoped(typeof(IRepositoryDefinition<>), typeof(RepositoryDefinition<>));
         services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
         services.AddScoped<ILocalStorage, LocalStorage>();
+        services.AddScoped<VnPayLibrary>();
         services.AddScoped<MomoService>();
+        services.AddScoped<VNPayService>();
         services.AddScoped(typeof(ICheckInstanceOfTEntityClass<>), typeof(CheckInstanceOfTEntityClass<>));
         // services.AddScoped<IMomoHub, MomoHub>();
 

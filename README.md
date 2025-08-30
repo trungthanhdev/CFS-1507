@@ -6,8 +6,8 @@ A backend RESTful API developed with **.NET 9**, serving as the foundation for a
 
 ## 👇 Visit Now
 
-- 🌐 [Explore the Website](https://portfolio-one-sigma-16.vercel.app/trung-thanh)
-- 🌐 [Explore the APIs](https://portfolio-one-sigma-16.vercel.app/trung-thanh)
+- 🌐 [Explore the Website](https://www.vietsnuts.vn/)
+- 🌐 [Explore the APIs](https://api.vietsnuts.vn/swagger/index.html)
 
 ---
 
@@ -37,7 +37,7 @@ A backend RESTful API developed with **.NET 9**, serving as the foundation for a
 | **Database**      | PostgreSQL (hosted on Neon)     |
 | **ORM**           | Entity Framework Core           |
 | **Platform**      | WebApp                          |
-| **Hosting**       |                                 |
+| **Hosting**       | Render                          |
 | **Caching**       |                                 |
 | **Media Storage** | Local Storage via Docker volume |
 | **Email Service** |                                 |
